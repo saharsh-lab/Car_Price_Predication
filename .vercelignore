@@ -1,0 +1,11 @@
+.venv
+__pycache__
+*.ipynb
+.ipynb_checkpoints
+.DS_Store
+carpp.ipynb
+app.py
+app2.py
+train_model.py
+Cardetails.csv
+model.pkl

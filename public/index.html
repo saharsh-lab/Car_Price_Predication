@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Car Price Prediction</title>
+  <style>
+    :root {
+      --blue: #2a9df4;
+      --green: #4caf50;
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .hero {
+      background: linear-gradient(135deg, #2a9df4, #1d6fb8);
+      color: white;
+      padding: 2.5rem 1rem;
+      text-align: center;
+    }
+    .hero h1 { margin: 0 0 0.5rem; font-size: 2rem; }
+    .hero p { margin: 0; opacity: 0.95; }
+    .layout {
+      max-width: 1100px;
+      margin: -1.5rem auto 2rem;
+      padding: 0 1rem;
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 1.25rem;
+    }
+    .card {
+      background: var(--card);
+      border-radius: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      padding: 1.25rem;
+    }
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin: 0.9rem 0 0.35rem;
+    }
+    select, button {
+      width: 100%;
+      padding: 0.65rem 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 0.95rem;
+    }
+    input[type="range"] { width: 100%; }
+    .value { color: var(--muted); font-size: 0.8rem; }
+    button {
+      margin-top: 1.25rem;
+      background: var(--blue);
+      color: white;
+      border: none;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    button:hover { filter: brightness(0.95); }
+    button:disabled { opacity: 0.6; cursor: not-allowed; }
+    .result {
+      min-height: 280px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .result.empty { color: var(--muted); }
+    .price-box {
+      background: var(--green);
+      color: white;
+      border-radius: 12px;
+      padding: 2rem;
+      width: 100%;
+    }
+    .price-box h2 { margin: 0 0 0.5rem; font-size: 1.1rem; }
+    .price-box .price { margin: 0; font-size: 2.4rem; font-weight: 800; }
+    .metrics { margin-top: 1rem; color: var(--muted); font-size: 0.9rem; }
+    .error {
+      background: #fee2e2;
+      color: #991b1b;
+      padding: 1rem;
+      border-radius: 8px;
+      width: 100%;
+    }
+    @media (max-width: 860px) {
+      .layout { grid-template-columns: 1fr; margin-top: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <h1>Car Price Prediction</h1>
+    <p>Enter car details to get an estimated resale price.</p>
+  </header>
+
+  <main class="layout">
+    <section class="card">
+      <h3>Car Details</h3>
+      <form id="predict-form">
+        <label for="name">Brand</label>
+        <select id="name" name="name" required></select>
+
+        <label for="year">Year <span class="value" id="year-val"></span></label>
+        <input id="year" name="year" type="range" required />
+
+        <label for="km_driven">Kilometers driven <span class="value" id="km-val"></span></label>
+        <input id="km_driven" name="km_driven" type="range" required />
+
+        <label for="fuel">Fuel type</label>
+        <select id="fuel" name="fuel" required></select>
+
+        <label for="seller_type">Seller type</label>
+        <select id="seller_type" name="seller_type" required></select>
+
+        <label for="transmission">Transmission</label>
+        <select id="transmission" name="transmission" required></select>
+
+        <label for="owner">Owner</label>
+        <select id="owner" name="owner" required></select>
+
+        <label for="mileage">Mileage (kmpl) <span class="value" id="mileage-val"></span></label>
+        <input id="mileage" name="mileage" type="range" step="0.1" required />
+
+        <label for="engine">Engine (CC) <span class="value" id="engine-val"></span></label>
+        <input id="engine" name="engine" type="range" required />
+
+        <label for="max_power">Max power (BHP) <span class="value" id="power-val"></span></label>
+        <input id="max_power" name="max_power" type="range" step="0.1" required />
+
+        <label for="seats">Seats <span class="value" id="seats-val"></span></label>
+        <input id="seats" name="seats" type="range" required />
+
+        <button type="submit" id="submit-btn">Predict Price</button>
+      </form>
+    </section>
+
+    <section class="card result empty" id="result">
+      <p>Fill in the form and click <strong>Predict Price</strong>.</p>
+      <p class="metrics" id="metrics"></p>
+    </section>
+  </main>
+
+  <script>
+    let metadata = null;
+
+    function fillSelect(id, values, selected) {
+      const el = document.getElementById(id);
+      el.innerHTML = values.map(v => `<option value="${v}">${v}</option>`).join("");
+      el.value = selected;
+    }
+
+    function setupRange(id, min, max, value, suffix = "") {
+      const el = document.getElementById(id);
+      const label = document.getElementById(`${id}-val`);
+      el.min = min;
+      el.max = max;
+      el.value = value;
+      const update = () => { label.textContent = `${el.value}${suffix}`; };
+      el.oninput = update;
+      update();
+    }
+
+    function applyBrandDefaults(brand) {
+      const d = metadata.brand_defaults[brand];
+      const r = metadata.ranges;
+      setupRange("year", r.year[0], r.year[1], d.year);
+      setupRange("km_driven", r.km_driven[0], r.km_driven[1], d.km_driven);
+      setupRange("mileage", r.mileage[0], r.mileage[1], d.mileage);
+      setupRange("engine", r.engine[0], r.engine[1], d.engine);
+      setupRange("max_power", r.max_power[0], r.max_power[1], d.max_power);
+      setupRange("seats", r.seats[0], r.seats[1], d.seats);
+      fillSelect("fuel", metadata.options.fuel, d.fuel);
+      fillSelect("seller_type", metadata.options.seller_type, d.seller_type);
+      fillSelect("transmission", metadata.options.transmission, d.transmission);
+      fillSelect("owner", metadata.options.owner, d.owner);
+    }
+
+    async function init() {
+      const res = await fetch("/metadata.json");
+      metadata = await res.json();
+      fillSelect("name", metadata.brands, metadata.brands[0]);
+      document.getElementById("name").onchange = (e) => applyBrandDefaults(e.target.value);
+      applyBrandDefaults(metadata.brands[0]);
+      if (metadata.metrics) {
+        document.getElementById("metrics").textContent =
+          `Model accuracy: R² ${metadata.metrics.r2} · typical error ±₹${metadata.metrics.mae.toLocaleString("en-IN")}`;
+      }
+    }
+
+    document.getElementById("predict-form").onsubmit = async (event) => {
+      event.preventDefault();
+      const btn = document.getElementById("submit-btn");
+      const result = document.getElementById("result");
+      btn.disabled = true;
+      result.className = "card result empty";
+      result.innerHTML = "<p>Predicting...</p>";
+
+      const payload = Object.fromEntries(new FormData(event.target).entries());
+      payload.year = Number(payload.year);
+      payload.km_driven = Number(payload.km_driven);
+      payload.mileage = Number(payload.mileage);
+      payload.engine = Number(payload.engine);
+      payload.max_power = Number(payload.max_power);
+      payload.seats = Number(payload.seats);
+
+      try {
+        const response = await fetch("/api/predict", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || "Prediction failed");
+
+        result.className = "card result";
+        result.innerHTML = `
+          <div class="price-box">
+            <h2>Predicted Car Price</h2>
+            <p class="price">${data.price_formatted}</p>
+          </div>
+          <p class="metrics" id="metrics"></p>
+        `;
+        if (metadata.metrics) {
+          document.getElementById("metrics").textContent =
+            `Model accuracy: R² ${metadata.metrics.r2} · typical error ±₹${metadata.metrics.mae.toLocaleString("en-IN")}`;
+        }
+      } catch (error) {
+        result.className = "card result";
+        result.innerHTML = `<div class="error">${error.message}</motion.div>`;
+      } finally {
+        btn.disabled = false;
+      }
+    };
+
+    init();
+  </script>
+</body>
+</html>

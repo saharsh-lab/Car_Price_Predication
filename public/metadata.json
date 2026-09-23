@@ -1,0 +1,465 @@
+{
+  "metrics": {
+    "r2": 0.9415,
+    "mae": 68223,
+    "mape": 15.91,
+    "accuracy_pct": 94.1
+  },
+  "brands": [
+    "Ambassador",
+    "Ashok",
+    "Audi",
+    "BMW",
+    "Chevrolet",
+    "Daewoo",
+    "Datsun",
+    "Fiat",
+    "Force",
+    "Ford",
+    "Honda",
+    "Hyundai",
+    "Isuzu",
+    "Jaguar",
+    "Jeep",
+    "Kia",
+    "Land",
+    "Lexus",
+    "MG",
+    "Mahindra",
+    "Maruti",
+    "Mercedes-Benz",
+    "Mitsubishi",
+    "Nissan",
+    "Opel",
+    "Renault",
+    "Skoda",
+    "Tata",
+    "Toyota",
+    "Volkswagen",
+    "Volvo"
+  ],
+  "options": {
+    "fuel": [
+      "CNG",
+      "Diesel",
+      "LPG",
+      "Petrol"
+    ],
+    "seller_type": [
+      "Dealer",
+      "Individual",
+      "Trustmark Dealer"
+    ],
+    "transmission": [
+      "Automatic",
+      "Manual"
+    ],
+    "owner": [
+      "First Owner",
+      "Fourth & Above Owner",
+      "Second Owner",
+      "Test Drive Car",
+      "Third Owner"
+    ]
+  },
+  "ranges": {
+    "year": [
+      1994,
+      2020
+    ],
+    "km_driven": [
+      1,
+      2360457
+    ],
+    "mileage": [
+      9.0,
+      42.0
+    ],
+    "engine": [
+      624,
+      3604
+    ],
+    "max_power": [
+      32.8,
+      400.0
+    ],
+    "seats": [
+      2,
+      14
+    ]
+  },
+  "brand_defaults": {
+    "Ambassador": {
+      "year": 2004,
+      "km_driven": 85000,
+      "fuel": "Diesel",
+      "seller_type": "Individual",
+      "transmission": "Manual",
+      "owner": "Second Owner",
+      "mileage": 12.8,
+      "engine": 1995,
+      "max_power": 52.0,
+      "seats": 5
+    },
+    "Ashok": {
+      "year": 2013,
+      "km_driven": 200000,
+      "fuel": "Diesel",
+      "seller_type": "Individual",
+      "transmission": "Manual",
+      "owner": "Second Owner",
+      "mileage": 20.1,
+      "engine": 1461,
+      "max_power": 75.0,
+      "seats": 8
+    },
+    "Audi": {
+      "year": 2015,
+      "km_driven": 46000,
+      "fuel": "Diesel",
+      "seller_type": "Individual",
+      "transmission": "Automatic",
+      "owner": "First Owner",
+      "mileage": 15.7,
+      "engine": 1968,
+      "max_power": 187.7,
+      "seats": 5
+    },
+    "BMW": {
+      "year": 2016,
+      "km_driven": 44000,
+      "fuel": "Diesel",
+      "seller_type": "Dealer",
+      "transmission": "Automatic",
+      "owner": "First Owner",
+      "mileage": 17.1,
+      "engine": 1995,
+      "max_power": 190.0,
+      "seats": 5
+    },
+    "Chevrolet": {
+      "year": 2012,
+      "km_driven": 70000,
+      "fuel": "Diesel",
+      "seller_type": "Individual",
+      "transmission": "Manual",
+      "owner": "First Owner",
+      "mileage": 18.2,
+      "engine": 1199,
+      "max_power": 73.8,
+      "seats": 5
+    },
+    "Daewoo": {
+      "year": 2000,
+      "km_driven": 60000,
+      "fuel": "Petrol",
+      "seller_type": "Individual",
+      "transmission": "Manual",
+      "owner": "First Owner",
+      "mileage": 18.5,
+      "engine": 796,
+      "max_power": 53.0,
+      "seats": 5
+    },
+    "Datsun": {
+      "year": 2017,
+      "km_driven": 35000,
+      "fuel": "Petrol",
+      "seller_type": "Individual",
+      "transmission": "Manual",
+      "owner": "First Owner",
+      "mileage": 20.6,
+      "engine": 1198,
+      "max_power": 67.0,
+      "seats": 5
+    },
+    "Fiat": {
+      "year": 2013,
+      "km_driven": 77000,
+      "fuel": "Diesel",
+      "seller_type": "Individual",
+      "transmission": "Manual",
+      "owner": "First Owner",
+      "mileage": 20.3,
+      "engine": 1248,
+      "max_power": 90.0,
+      "seats": 5
+    },
+    "Force": {
+      "year": 2018,
+      "km_driven": 70000,
+      "fuel": "Diesel",
+      "seller_type": "Individual",
+      "transmission": "Manual",
+      "owner": "First Owner",
+      "mileage": 17.0,
+      "engine": 2398,
+      "max_power": 109.9,
+      "seats": 7
+    },
+    "Ford": {
+      "year": 2014,
+      "km_driven": 70000,
+      "fuel": "Diesel",
+      "seller_type": "Individual",
+      "transmission": "Manual",
+      "owner": "First Owner",
+      "mileage": 20.0,
+      "engine": 1497,
+      "max_power": 92.0,
+      "seats": 5
+    },
+    "Honda": {
+      "year": 2015,
+      "km_driven": 60000,
+      "fuel": "Petrol",
+      "seller_type": "Individual",
+      "transmission": "Manual",
+      "owner": "First Owner",
+      "mileage": 18.0,
+      "engine": 1497,
+      "max_power": 98.6,
+      "seats": 5
+    },
+    "Hyundai": {
+      "year": 2015,
+      "km_driven": 60000,
+      "fuel": "Petrol",
+      "seller_type": "Individual",
+      "transmission": "Manual",
+      "owner": "First Owner",
+      "mileage": 19.8,
+      "engine": 1197,
+      "max_power": 81.9,
+      "seats": 5
+    },
+    "Isuzu": {
+      "year": 2018,
+      "km_driven": 43400,
+      "fuel": "Diesel",
+      "seller_type": "Individual",
+      "transmission": "Automatic",
+      "owner": "First Owner",
+      "mileage": 12.4,
+      "engine": 2749,
+      "max_power": 154.4,
+      "seats": 6
+    },
+    "Jaguar": {
+      "year": 2015,
+      "km_driven": 40000,
+      "fuel": "Diesel",
+      "seller_type": "Dealer",
+      "transmission": "Automatic",
+      "owner": "First Owner",
+      "mileage": 14.7,
+      "engine": 2179,
+      "max_power": 187.7,
+      "seats": 5
+    },
+    "Jeep": {
+      "year": 2017,
+      "km_driven": 27500,
+      "fuel": "Diesel",
+      "seller_type": "Individual",
+      "transmission": "Manual",
+      "owner": "First Owner",
+      "mileage": 17.1,
+      "engine": 1956,
+      "max_power": 170.0,
+      "seats": 5
+    },
+    "Kia": {
+      "year": 2019,
+      "km_driven": 10000,
+      "fuel": "Diesel",
+      "seller_type": "Individual",
+      "transmission": "Automatic",
+      "owner": "First Owner",
+      "mileage": 17.8,
+      "engine": 1493,
+      "max_power": 113.4,
+      "seats": 5
+    },
+    "Land": {
+      "year": 2013,
+      "km_driven": 64788,
+      "fuel": "Diesel",
+      "seller_type": "Dealer",
+      "transmission": "Automatic",
+      "owner": "First Owner",
+      "mileage": 12.8,
+      "engine": 2179,
+      "max_power": 148.3,
+      "seats": 5
+    },
+    "Lexus": {
+      "year": 2019,
+      "km_driven": 20000,
+      "fuel": "Petrol",
+      "seller_type": "Dealer",
+      "transmission": "Automatic",
+      "owner": "First Owner",
+      "mileage": 22.4,
+      "engine": 2487,
+      "max_power": 214.6,
+      "seats": 5
+    },
+    "MG": {
+      "year": 2019,
+      "km_driven": 16500,
+      "fuel": "Petrol",
+      "seller_type": "Dealer",
+      "transmission": "Automatic",
+      "owner": "First Owner",
+      "mileage": 14.0,
+      "engine": 1451,
+      "max_power": 141.0,
+      "seats": 5
+    },
+    "Mahindra": {
+      "year": 2014,
+      "km_driven": 84487,
+      "fuel": "Diesel",
+      "seller_type": "Individual",
+      "transmission": "Manual",
+      "owner": "First Owner",
+      "mileage": 16.0,
+      "engine": 2179,
+      "max_power": 100.0,
+      "seats": 7
+    },
+    "Maruti": {
+      "year": 2014,
+      "km_driven": 60000,
+      "fuel": "Petrol",
+      "seller_type": "Individual",
+      "transmission": "Manual",
+      "owner": "First Owner",
+      "mileage": 21.0,
+      "engine": 1197,
+      "max_power": 73.9,
+      "seats": 5
+    },
+    "Mercedes-Benz": {
+      "year": 2014,
+      "km_driven": 47500,
+      "fuel": "Diesel",
+      "seller_type": "Individual",
+      "transmission": "Automatic",
+      "owner": "First Owner",
+      "mileage": 14.8,
+      "engine": 2143,
+      "max_power": 179.5,
+      "seats": 5
+    },
+    "Mitsubishi": {
+      "year": 2011,
+      "km_driven": 120000,
+      "fuel": "Diesel",
+      "seller_type": "Individual",
+      "transmission": "Manual",
+      "owner": "First Owner",
+      "mileage": 13.5,
+      "engine": 2477,
+      "max_power": 116.9,
+      "seats": 6
+    },
+    "Nissan": {
+      "year": 2014,
+      "km_driven": 70000,
+      "fuel": "Diesel",
+      "seller_type": "Individual",
+      "transmission": "Manual",
+      "owner": "First Owner",
+      "mileage": 19.6,
+      "engine": 1461,
+      "max_power": 83.8,
+      "seats": 5
+    },
+    "Opel": {
+      "year": 1998,
+      "km_driven": 110000,
+      "fuel": "Petrol",
+      "seller_type": "Individual",
+      "transmission": "Manual",
+      "owner": "Third Owner",
+      "mileage": 13.1,
+      "engine": 1598,
+      "max_power": 77.0,
+      "seats": 5
+    },
+    "Renault": {
+      "year": 2016,
+      "km_driven": 50000,
+      "fuel": "Petrol",
+      "seller_type": "Individual",
+      "transmission": "Manual",
+      "owner": "First Owner",
+      "mileage": 23.0,
+      "engine": 999,
+      "max_power": 67.0,
+      "seats": 5
+    },
+    "Skoda": {
+      "year": 2013,
+      "km_driven": 90000,
+      "fuel": "Diesel",
+      "seller_type": "Individual",
+      "transmission": "Manual",
+      "owner": "First Owner",
+      "mileage": 20.0,
+      "engine": 1598,
+      "max_power": 103.5,
+      "seats": 5
+    },
+    "Tata": {
+      "year": 2013,
+      "km_driven": 80000,
+      "fuel": "Diesel",
+      "seller_type": "Individual",
+      "transmission": "Manual",
+      "owner": "First Owner",
+      "mileage": 18.8,
+      "engine": 1396,
+      "max_power": 75.0,
+      "seats": 5
+    },
+    "Toyota": {
+      "year": 2013,
+      "km_driven": 100000,
+      "fuel": "Diesel",
+      "seller_type": "Individual",
+      "transmission": "Manual",
+      "owner": "First Owner",
+      "mileage": 13.0,
+      "engine": 2494,
+      "max_power": 102.0,
+      "seats": 7
+    },
+    "Volkswagen": {
+      "year": 2013,
+      "km_driven": 70000,
+      "fuel": "Diesel",
+      "seller_type": "Individual",
+      "transmission": "Manual",
+      "owner": "First Owner",
+      "mileage": 20.5,
+      "engine": 1498,
+      "max_power": 103.6,
+      "seats": 5
+    },
+    "Volvo": {
+      "year": 2018,
+      "km_driven": 30000,
+      "fuel": "Diesel",
+      "seller_type": "Individual",
+      "transmission": "Automatic",
+      "owner": "First Owner",
+      "mileage": 18.0,
+      "engine": 1969,
+      "max_power": 190.0,
+      "seats": 5
+    }
+  }
+}
