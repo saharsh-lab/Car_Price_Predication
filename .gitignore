@@ -46,3 +46,4 @@ venv.bak/
 ehthumbs.db
 Thumbs.db
 test_*.joblib
+.vercel
