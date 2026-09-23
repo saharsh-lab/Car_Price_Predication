@@ -3,246 +3,875 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Car Price Prediction</title>
+  <title>🚗 Car Price Prediction App 🚘</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --blue: #2a9df4;
-      --green: #4caf50;
-      --bg: #f4f7fb;
-      --card: #ffffff;
-      --text: #1f2937;
-      --muted: #6b7280;
+      --primary: #2a9df4;
+      --primary-dark: #1b7bc8;
+      --success: #4CAF50;
+      --success-dark: #3e8e41;
+      --bg: #ffffff;
+      --sidebar-bg: #f0f2f6;
+      --sidebar-border: #e6e9ef;
+      --text-main: #262730;
+      --text-muted: #555867;
+      --card-bg: #ffffff;
+      --input-bg: #ffffff;
+      --input-border: #d1d5db;
+      --input-focus: #2a9df4;
+      --shadow: 0 4px 20px rgba(0,0,0,0.06);
     }
-    * { box-sizing: border-box; }
-    body {
+
+    * {
+      box-sizing: border-box;
       margin: 0;
-      font-family: Inter, system-ui, -apple-system, sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      padding: 0;
     }
-    .hero {
-      background: linear-gradient(135deg, #2a9df4, #1d6fb8);
-      color: white;
-      padding: 2.5rem 1rem;
-      text-align: center;
-    }
-    .hero h1 { margin: 0 0 0.5rem; font-size: 2rem; }
-    .hero p { margin: 0; opacity: 0.95; }
-    .layout {
-      max-width: 1100px;
-      margin: -1.5rem auto 2rem;
-      padding: 0 1rem;
-      display: grid;
-      grid-template-columns: 320px 1fr;
-      gap: 1.25rem;
-    }
-    .card {
-      background: var(--card);
-      border-radius: 14px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-      padding: 1.25rem;
-    }
-    label {
-      display: block;
-      font-size: 0.85rem;
-      font-weight: 600;
-      margin: 0.9rem 0 0.35rem;
-    }
-    select, button {
-      width: 100%;
-      padding: 0.65rem 0.75rem;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
-      font-size: 0.95rem;
-    }
-    input[type="range"] { width: 100%; }
-    .value { color: var(--muted); font-size: 0.8rem; }
-    button {
-      margin-top: 1.25rem;
-      background: var(--blue);
-      color: white;
-      border: none;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    button:hover { filter: brightness(0.95); }
-    button:disabled { opacity: 0.6; cursor: not-allowed; }
-    .result {
-      min-height: 280px;
+
+    body {
+      font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      justify-content: center;
+    }
+
+    /* Main App Layout */
+    .st-app-container {
+      display: flex;
+      flex: 1;
+      min-height: 100vh;
+    }
+
+    /* Sidebar Styling (Streamlit exact feel) */
+    .st-sidebar {
+      width: 380px;
+      min-width: 340px;
+      background-color: var(--sidebar-bg);
+      border-right: 1px solid var(--sidebar-border);
+      padding: 2rem 1.5rem;
+      overflow-y: auto;
+      height: 100vh;
+      position: sticky;
+      top: 0;
+    }
+
+    .st-sidebar-header {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 1.5rem;
+      display: flex;
       align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Form Inputs */
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 0.4rem;
+    }
+
+    .val-badge {
+      background: #e2e8f0;
+      color: #334155;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    /* Select Inputs with High Contrast */
+    .select-wrapper {
+      position: relative;
+    }
+
+    select {
+      width: 100%;
+      background-color: #ffffff !important;
+      color: #1e293b !important;
+      border: 1px solid var(--input-border);
+      border-radius: 8px;
+      padding: 0.65rem 2.2rem 0.65rem 0.85rem;
+      font-size: 0.95rem;
+      font-family: inherit;
+      font-weight: 500;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(42, 157, 244, 0.2);
+    }
+
+    select option {
+      background-color: #ffffff !important;
+      color: #1e293b !important;
+      padding: 0.5rem;
+      font-size: 0.95rem;
+    }
+
+    .select-arrow {
+      position: absolute;
+      right: 0.85rem;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      width: 14px;
+      height: 14px;
+      fill: #64748b;
+    }
+
+    /* Range Sliders */
+    .range-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 6px;
+      background: #cbd5e1;
+      border-radius: 3px;
+      outline: none;
+      margin: 0.6rem 0 0.2rem;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      background: var(--primary);
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+      transition: transform 0.1s, background 0.2s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+      background: var(--primary-dark);
+    }
+
+    .range-limits {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: #94a3b8;
+    }
+
+    /* Streamlit-styled Action Button */
+    .st-predict-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #2a9df4, #1d6fb8);
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      font-size: 1.05rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 12px rgba(42, 157, 244, 0.35);
+      transition: all 0.2s ease;
+      margin-top: 1.5rem;
+    }
+
+    .st-predict-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(42, 157, 244, 0.45);
+      filter: brightness(1.05);
+    }
+
+    .st-predict-btn:active {
+      transform: translateY(1px);
+    }
+
+    .st-predict-btn:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Main Content Styling */
+    .st-main {
+      flex: 1;
+      padding: 2rem 3rem;
+      max-width: 900px;
+    }
+
+    /* Header Banner (Matches app.py style) */
+    .st-banner {
+      background-color: var(--primary);
+      padding: 1.25rem 1.5rem;
+      border-radius: 12px;
+      color: white;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(42, 157, 244, 0.25);
+      margin-bottom: 1.5rem;
+    }
+
+    .st-banner h1 {
+      font-size: 1.9rem;
+      font-weight: 800;
+      margin-bottom: 0.35rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .st-banner p {
+      font-size: 1rem;
+      opacity: 0.95;
+    }
+
+    /* Accuracy Caption */
+    .st-caption {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      padding: 0.5rem 0.75rem;
+      background: #f1f5f9;
+      border-left: 4px solid var(--primary);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    /* Result Green Card (Matches app.py) */
+    .st-result-box {
+      background-color: var(--success);
+      padding: 2.25rem 2rem;
+      border-radius: 12px;
+      color: white;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(76, 175, 80, 0.3);
+      animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      margin-top: 1.5rem;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.95); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .st-result-box h2 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .st-result-box .price-display {
+      font-size: 2.8rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .price-details-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .detail-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 1rem;
       text-align: center;
     }
-    .result.empty { color: var(--muted); }
-    .price-box {
-      background: var(--green);
-      color: white;
+
+    .detail-card .title {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: #64748b;
+      margin-bottom: 0.3rem;
+    }
+
+    .detail-card .val {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    /* Initial State Card */
+    .empty-state {
+      border: 2px dashed #cbd5e1;
       border-radius: 12px;
-      padding: 2rem;
-      width: 100%;
+      padding: 3.5rem 2rem;
+      text-align: center;
+      color: #64748b;
+      margin-top: 1.5rem;
     }
-    .price-box h2 { margin: 0 0 0.5rem; font-size: 1.1rem; }
-    .price-box .price { margin: 0; font-size: 2.4rem; font-weight: 800; }
-    .metrics { margin-top: 1rem; color: var(--muted); font-size: 0.9rem; }
-    .error {
-      background: #fee2e2;
-      color: #991b1b;
-      padding: 1rem;
-      border-radius: 8px;
-      width: 100%;
+
+    .empty-state svg {
+      width: 48px;
+      height: 48px;
+      stroke: #94a3b8;
+      margin-bottom: 1rem;
     }
-    @media (max-width: 860px) {
-      .layout { grid-template-columns: 1fr; margin-top: 1rem; }
+
+    .empty-state h3 {
+      font-size: 1.15rem;
+      color: #334155;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Canvas Balloons */
+    #balloon-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 3rem;
+      text-align: center;
+      color: #94a3b8;
+      font-size: 0.85rem;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 1.5rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .st-app-container {
+        flex-direction: column;
+      }
+      .st-sidebar {
+        width: 100%;
+        height: auto;
+        position: static;
+        border-right: none;
+        border-bottom: 1px solid var(--sidebar-border);
+      }
+      .st-main {
+        padding: 1.5rem 1rem;
+      }
+      .price-details-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
-  <header class="hero">
-    <h1>Car Price Prediction</h1>
-    <p>Enter car details to get an estimated resale price.</p>
-  </header>
+  <canvas id="balloon-canvas"></canvas>
 
-  <main class="layout">
-    <section class="card">
-      <h3>Car Details</h3>
-      <form id="predict-form">
-        <label for="name">Brand</label>
-        <select id="name" name="name" required></select>
+  <div class="st-app-container">
+    <!-- Sidebar -->
+    <aside class="st-sidebar">
+      <div class="st-sidebar-header">
+        <span>📝</span>
+        <span>Enter Car Details</span>
+      </div>
 
-        <label for="year">Year <span class="value" id="year-val"></span></label>
-        <input id="year" name="year" type="range" required />
+      <form id="car-form">
+        <!-- Brand -->
+        <div class="form-group">
+          <label for="name">Select Car Brand</label>
+          <div class="select-wrapper">
+            <select id="name" name="name" required></select>
+            <svg class="select-arrow" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
+          </div>
+        </div>
 
-        <label for="km_driven">Kilometers driven <span class="value" id="km-val"></span></label>
-        <input id="km_driven" name="km_driven" type="range" required />
+        <!-- Year -->
+        <div class="form-group">
+          <label for="year">
+            <span>Car Manufactured Year</span>
+            <span class="val-badge" id="year-badge">2014</span>
+          </label>
+          <div class="range-wrap">
+            <input id="year" name="year" type="range" min="1994" max="2024" value="2014" step="1" required />
+            <div class="range-limits">
+              <span id="year-min">1994</span>
+              <span id="year-max">2024</span>
+            </div>
+          </div>
+        </div>
 
-        <label for="fuel">Fuel type</label>
-        <select id="fuel" name="fuel" required></select>
+        <!-- Km Driven -->
+        <div class="form-group">
+          <label for="km_driven">
+            <span>No. of Kilometers Driven</span>
+            <span class="val-badge" id="km-badge">60,000 km</span>
+          </label>
+          <div class="range-wrap">
+            <input id="km_driven" name="km_driven" type="range" min="1000" max="250000" value="60000" step="1000" required />
+            <div class="range-limits">
+              <span>1,000 km</span>
+              <span>250,000 km</span>
+            </div>
+          </div>
+        </div>
 
-        <label for="seller_type">Seller type</label>
-        <select id="seller_type" name="seller_type" required></select>
+        <!-- Fuel Type -->
+        <div class="form-group">
+          <label for="fuel">Fuel Type</label>
+          <div class="select-wrapper">
+            <select id="fuel" name="fuel" required>
+              <option value="Diesel">Diesel</option>
+              <option value="Petrol" selected>Petrol</option>
+              <option value="CNG">CNG</option>
+              <option value="LPG">LPG</option>
+            </select>
+            <svg class="select-arrow" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
+          </div>
+        </div>
 
-        <label for="transmission">Transmission</label>
-        <select id="transmission" name="transmission" required></select>
+        <!-- Seller Type -->
+        <div class="form-group">
+          <label for="seller_type">Seller Type</label>
+          <div class="select-wrapper">
+            <select id="seller_type" name="seller_type" required>
+              <option value="Individual" selected>Individual</option>
+              <option value="Dealer">Dealer</option>
+              <option value="Trustmark Dealer">Trustmark Dealer</option>
+            </select>
+            <svg class="select-arrow" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
+          </div>
+        </div>
 
-        <label for="owner">Owner</label>
-        <select id="owner" name="owner" required></select>
+        <!-- Transmission -->
+        <div class="form-group">
+          <label for="transmission">Transmission Type</label>
+          <div class="select-wrapper">
+            <select id="transmission" name="transmission" required>
+              <option value="Manual" selected>Manual</option>
+              <option value="Automatic">Automatic</option>
+            </select>
+            <svg class="select-arrow" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
+          </div>
+        </div>
 
-        <label for="mileage">Mileage (kmpl) <span class="value" id="mileage-val"></span></label>
-        <input id="mileage" name="mileage" type="range" step="0.1" required />
+        <!-- Owner -->
+        <div class="form-group">
+          <label for="owner">Owner</label>
+          <div class="select-wrapper">
+            <select id="owner" name="owner" required>
+              <option value="First Owner" selected>First Owner</option>
+              <option value="Second Owner">Second Owner</option>
+              <option value="Third Owner">Third Owner</option>
+              <option value="Fourth & Above Owner">Fourth & Above Owner</option>
+              <option value="Test Drive Car">Test Drive Car</option>
+            </select>
+            <svg class="select-arrow" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
+          </div>
+        </div>
 
-        <label for="engine">Engine (CC) <span class="value" id="engine-val"></span></label>
-        <input id="engine" name="engine" type="range" required />
+        <!-- Mileage -->
+        <div class="form-group">
+          <label for="mileage">
+            <span>Car Mileage (kmpl)</span>
+            <span class="val-badge" id="mileage-badge">19.0 kmpl</span>
+          </label>
+          <div class="range-wrap">
+            <input id="mileage" name="mileage" type="range" min="8.0" max="35.0" value="19.0" step="0.1" required />
+            <div class="range-limits">
+              <span>8.0 kmpl</span>
+              <span>35.0 kmpl</span>
+            </div>
+          </div>
+        </div>
 
-        <label for="max_power">Max power (BHP) <span class="value" id="power-val"></span></label>
-        <input id="max_power" name="max_power" type="range" step="0.1" required />
+        <!-- Engine -->
+        <div class="form-group">
+          <label for="engine">
+            <span>Engine Capacity (CC)</span>
+            <span class="val-badge" id="engine-badge">1248 CC</span>
+          </label>
+          <div class="range-wrap">
+            <input id="engine" name="engine" type="range" min="600" max="3600" value="1248" step="10" required />
+            <div class="range-limits">
+              <span>600 CC</span>
+              <span>3600 CC</span>
+            </div>
+          </div>
+        </div>
 
-        <label for="seats">Seats <span class="value" id="seats-val"></span></label>
-        <input id="seats" name="seats" type="range" required />
+        <!-- Max Power -->
+        <div class="form-group">
+          <label for="max_power">
+            <span>Max Power (BHP)</span>
+            <span class="val-badge" id="power-badge">74.0 BHP</span>
+          </label>
+          <div class="range-wrap">
+            <input id="max_power" name="max_power" type="range" min="30.0" max="300.0" value="74.0" step="0.5" required />
+            <div class="range-limits">
+              <span>30.0 BHP</span>
+              <span>300.0 BHP</span>
+            </div>
+          </div>
+        </div>
 
-        <button type="submit" id="submit-btn">Predict Price</button>
+        <!-- Seats -->
+        <div class="form-group">
+          <label for="seats">
+            <span>Number of Seats</span>
+            <span class="val-badge" id="seats-badge">5</span>
+          </label>
+          <div class="range-wrap">
+            <input id="seats" name="seats" type="range" min="2" max="10" value="5" step="1" required />
+            <div class="range-limits">
+              <span>2 seats</span>
+              <span>10 seats</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Predict Button -->
+        <button type="submit" id="predict-btn" class="st-predict-btn">
+          <span>🚀</span>
+          <span>Predict Price</span>
+        </button>
       </form>
-    </section>
+    </aside>
 
-    <section class="card result empty" id="result">
-      <p>Fill in the form and click <strong>Predict Price</strong>.</p>
-      <p class="metrics" id="metrics"></p>
-    </section>
-  </main>
+    <!-- Main Content Area -->
+    <main class="st-main">
+      <div class="st-banner">
+        <h1><span>🚗</span> Car Price Prediction App <span>🚘</span></h1>
+        <p>Enter the car details in the sidebar to get an estimated resale price!</p>
+      </div>
+
+      <div class="st-caption" id="model-metrics-caption">
+        <span>📊</span>
+        <span id="caption-text">Model accuracy: 94.1% (R² 0.941) · typical error ±₹68,223 (15.9%)</span>
+      </div>
+
+      <div id="result-container">
+        <div class="empty-state">
+          <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
+          </svg>
+          <h3>Ready for Prediction</h3>
+          <p>Adjust the vehicle specifications on the left sidebar and click <strong>"Predict Price"</strong>.</p>
+        </div>
+      </div>
+
+      <footer>
+        <p>Machine Learning Project · High-Accuracy Ensemble Regression Model</p>
+      </footer>
+    </main>
+  </div>
 
   <script>
-    let metadata = null;
+    // Embedded brand list for instant rendering without waiting for network
+    const DEFAULT_BRANDS = [
+      "Maruti", "Hyundai", "Honda", "Toyota", "Ford", "Mahindra", "Tata",
+      "Renault", "Chevrolet", "Volkswagen", "Skoda", "Nissan", "BMW",
+      "Mercedes-Benz", "Audi", "Datsun", "Fiat", "Jeep", "Kia", "MG",
+      "Volvo", "Jaguar", "Land", "Lexus", "Mitsubishi", "Ambassador",
+      "Ashok", "Daewoo", "Force", "Isuzu", "Opel"
+    ];
 
-    function fillSelect(id, values, selected) {
-      const el = document.getElementById(id);
-      el.innerHTML = values.map(v => `<option value="${v}">${v}</option>`).join("");
-      el.value = selected;
-    }
+    const DEFAULT_OPTIONS = {
+      fuel: ["Petrol", "Diesel", "CNG", "LPG"],
+      seller_type: ["Individual", "Dealer", "Trustmark Dealer"],
+      transmission: ["Manual", "Automatic"],
+      owner: ["First Owner", "Second Owner", "Third Owner", "Fourth & Above Owner", "Test Drive Car"]
+    };
 
-    function setupRange(id, min, max, value, suffix = "") {
+    let globalMetadata = null;
+
+    // Synchronize Range Sliders and Badges
+    function bindSlider(id, badgeId, suffix = "") {
       const el = document.getElementById(id);
-      const label = document.getElementById(`${id}-val`);
-      el.min = min;
-      el.max = max;
-      el.value = value;
-      const update = () => { label.textContent = `${el.value}${suffix}`; };
-      el.oninput = update;
+      const badge = document.getElementById(badgeId);
+      const update = () => {
+        let val = Number(el.value);
+        if (id === "km_driven") {
+          badge.textContent = `${val.toLocaleString("en-IN")}${suffix}`;
+        } else if (id === "mileage" || id === "max_power") {
+          badge.textContent = `${val.toFixed(1)}${suffix}`;
+        } else {
+          badge.textContent = `${val}${suffix}`;
+        }
+      };
+      el.addEventListener("input", update);
       update();
     }
 
-    function applyBrandDefaults(brand) {
-      const d = metadata.brand_defaults[brand];
-      const r = metadata.ranges;
-      setupRange("year", r.year[0], r.year[1], d.year);
-      setupRange("km_driven", r.km_driven[0], r.km_driven[1], d.km_driven);
-      setupRange("mileage", r.mileage[0], r.mileage[1], d.mileage);
-      setupRange("engine", r.engine[0], r.engine[1], d.engine);
-      setupRange("max_power", r.max_power[0], r.max_power[1], d.max_power);
-      setupRange("seats", r.seats[0], r.seats[1], d.seats);
-      fillSelect("fuel", metadata.options.fuel, d.fuel);
-      fillSelect("seller_type", metadata.options.seller_type, d.seller_type);
-      fillSelect("transmission", metadata.options.transmission, d.transmission);
-      fillSelect("owner", metadata.options.owner, d.owner);
-    }
-
-    async function init() {
-      const res = await fetch("/metadata.json");
-      metadata = await res.json();
-      fillSelect("name", metadata.brands, metadata.brands[0]);
-      document.getElementById("name").onchange = (e) => applyBrandDefaults(e.target.value);
-      applyBrandDefaults(metadata.brands[0]);
-      if (metadata.metrics) {
-        document.getElementById("metrics").textContent =
-          `Model accuracy: R² ${metadata.metrics.r2} · typical error ±₹${metadata.metrics.mae.toLocaleString("en-IN")}`;
+    // Populate Select Elements cleanly with options
+    function populateSelect(id, items, selectedValue) {
+      const el = document.getElementById(id);
+      if (!el || !items || !items.length) return;
+      el.innerHTML = items.map(item => `
+        <option value="${item}" ${item === selectedValue ? 'selected' : ''}>${item}</option>
+      `).join("");
+      if (selectedValue) {
+        el.value = selectedValue;
       }
     }
 
-    document.getElementById("predict-form").onsubmit = async (event) => {
-      event.preventDefault();
-      const btn = document.getElementById("submit-btn");
-      const result = document.getElementById("result");
-      btn.disabled = true;
-      result.className = "card result empty";
-      result.innerHTML = "<p>Predicting...</p>";
+    // Apply Brand Specific Defaults (same as brand_defaults in app.py)
+    function applyBrandDefaults(brand) {
+      if (!globalMetadata || !globalMetadata.brand_defaults || !globalMetadata.brand_defaults[brand]) return;
+      const d = globalMetadata.brand_defaults[brand];
 
-      const payload = Object.fromEntries(new FormData(event.target).entries());
-      payload.year = Number(payload.year);
-      payload.km_driven = Number(payload.km_driven);
-      payload.mileage = Number(payload.mileage);
-      payload.engine = Number(payload.engine);
-      payload.max_power = Number(payload.max_power);
-      payload.seats = Number(payload.seats);
+      if (d.year) {
+        document.getElementById("year").value = d.year;
+        document.getElementById("year-badge").textContent = d.year;
+      }
+      if (d.km_driven) {
+        document.getElementById("km_driven").value = d.km_driven;
+        document.getElementById("km-badge").textContent = `${Number(d.km_driven).toLocaleString("en-IN")} km`;
+      }
+      if (d.mileage) {
+        document.getElementById("mileage").value = d.mileage;
+        document.getElementById("mileage-badge").textContent = `${Number(d.mileage).toFixed(1)} kmpl`;
+      }
+      if (d.engine) {
+        document.getElementById("engine").value = d.engine;
+        document.getElementById("engine-badge").textContent = `${d.engine} CC`;
+      }
+      if (d.max_power) {
+        document.getElementById("max_power").value = d.max_power;
+        document.getElementById("power-badge").textContent = `${Number(d.max_power).toFixed(1)} BHP`;
+      }
+      if (d.seats) {
+        document.getElementById("seats").value = d.seats;
+        document.getElementById("seats-badge").textContent = d.seats;
+      }
+
+      if (d.fuel) document.getElementById("fuel").value = d.fuel;
+      if (d.seller_type) document.getElementById("seller_type").value = d.seller_type;
+      if (d.transmission) document.getElementById("transmission").value = d.transmission;
+      if (d.owner) document.getElementById("owner").value = d.owner;
+    }
+
+    // Streamlit-like Balloon Animation
+    function launchBalloons() {
+      const canvas = document.getElementById("balloon-canvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const colors = ["#2a9df4", "#4CAF50", "#ff4b4b", "#ffa500", "#9b51e0", "#ff76ac"];
+      const balloons = [];
+      const count = 45;
+
+      for (let i = 0; i < count; i++) {
+        balloons.push({
+          x: Math.random() * canvas.width,
+          y: canvas.height + Math.random() * 300,
+          radius: 18 + Math.random() * 14,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          speed: 2.5 + Math.random() * 3.5,
+          swing: Math.random() * 2,
+          swingSpeed: 0.02 + Math.random() * 0.02,
+          angle: Math.random() * Math.PI * 2
+        });
+      }
+
+      let animationFrame;
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let active = 0;
+
+        for (let b of balloons) {
+          b.y -= b.speed;
+          b.angle += b.swingSpeed;
+          b.x += Math.sin(b.angle) * b.swing;
+
+          if (b.y + b.radius > -50) {
+            active++;
+            // Draw balloon body
+            ctx.beginPath();
+            ctx.ellipse(b.x, b.y, b.radius * 0.85, b.radius, 0, 0, Math.PI * 2);
+            ctx.fillStyle = b.color;
+            ctx.fill();
+
+            // Draw balloon knot
+            ctx.beginPath();
+            ctx.moveTo(b.x - 3, b.y + b.radius);
+            ctx.lineTo(b.x + 3, b.y + b.radius);
+            ctx.lineTo(b.x, b.y + b.radius + 5);
+            ctx.closePath();
+            ctx.fillStyle = b.color;
+            ctx.fill();
+
+            // Draw balloon string
+            ctx.beginPath();
+            ctx.moveTo(b.x, b.y + b.radius + 5);
+            ctx.quadraticCurveTo(b.x - 6, b.y + b.radius + 25, b.x + 3, b.y + b.radius + 45);
+            ctx.strokeStyle = "rgba(180,180,180,0.6)";
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+        }
+
+        if (active > 0) {
+          animationFrame = requestAnimationFrame(animate);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+      animate();
+    }
+
+    // Initialize Page
+    async function init() {
+      // 1. Setup sliders immediately
+      bindSlider("year", "year-badge");
+      bindSlider("km_driven", "km-badge", " km");
+      bindSlider("mileage", "mileage-badge", " kmpl");
+      bindSlider("engine", "engine-badge", " CC");
+      bindSlider("max_power", "power-badge", " BHP");
+      bindSlider("seats", "seats-badge");
+
+      // 2. Populate options immediately with defaults so nothing is ever empty!
+      populateSelect("name", DEFAULT_BRANDS, "Maruti");
+      populateSelect("fuel", DEFAULT_OPTIONS.fuel, "Petrol");
+      populateSelect("seller_type", DEFAULT_OPTIONS.seller_type, "Individual");
+      populateSelect("transmission", DEFAULT_OPTIONS.transmission, "Manual");
+      populateSelect("owner", DEFAULT_OPTIONS.owner, "First Owner");
+
+      // 3. Fetch full metadata from server
+      try {
+        const res = await fetch("/metadata.json");
+        if (res.ok) {
+          globalMetadata = await res.json();
+          if (globalMetadata.brands) {
+            const currentBrand = document.getElementById("name").value || globalMetadata.brands[0];
+            populateSelect("name", globalMetadata.brands, currentBrand);
+          }
+          if (globalMetadata.options) {
+            populateSelect("fuel", globalMetadata.options.fuel, document.getElementById("fuel").value);
+            populateSelect("seller_type", globalMetadata.options.seller_type, document.getElementById("seller_type").value);
+            populateSelect("transmission", globalMetadata.options.transmission, document.getElementById("transmission").value);
+            populateSelect("owner", globalMetadata.options.owner, document.getElementById("owner").value);
+          }
+          if (globalMetadata.metrics) {
+            const m = globalMetadata.metrics;
+            document.getElementById("caption-text").textContent =
+              `Model accuracy: ${m.accuracy_pct || (m.r2 * 100).toFixed(1)}% (R² ${m.r2.toFixed(3)}) · typical error ±₹${m.mae.toLocaleString("en-IN")} (${m.mape ? m.mape.toFixed(1) + '%' : ''})`;
+          }
+        }
+      } catch (e) {
+        console.warn("Loaded with local defaults, metadata fetch bypassed:", e);
+      }
+
+      // Brand selection change event
+      document.getElementById("name").addEventListener("change", (e) => {
+        applyBrandDefaults(e.target.value);
+      });
+    }
+
+    // Handle Form Submission
+    document.getElementById("car-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById("predict-btn");
+      const container = document.getElementById("result-container");
+      btn.disabled = true;
+      btn.innerHTML = `<span>⏳</span><span>Calculating...</span>`;
+
+      const formData = new FormData(e.target);
+      const payload = {
+        name: formData.get("name"),
+        year: Number(formData.get("year")),
+        km_driven: Number(formData.get("km_driven")),
+        fuel: formData.get("fuel"),
+        seller_type: formData.get("seller_type"),
+        transmission: formData.get("transmission"),
+        owner: formData.get("owner"),
+        mileage: Number(formData.get("mileage")),
+        engine: Number(formData.get("engine")),
+        max_power: Number(formData.get("max_power")),
+        seats: Number(formData.get("seats"))
+      };
 
       try {
         const response = await fetch("/api/predict", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
+          body: JSON.stringify(payload)
         });
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.error || "Prediction failed");
 
-        result.className = "card result";
-        result.innerHTML = `
-          <div class="price-box">
-            <h2>Predicted Car Price</h2>
-            <p class="price">${data.price_formatted}</p>
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || "Prediction request failed");
+
+        // Format car description
+        const carDesc = `${payload.year} ${payload.name} (${payload.fuel}, ${payload.transmission})`;
+
+        container.innerHTML = `
+          <div class="st-result-box">
+            <h2>The Predicted Car Price is:</h2>
+            <div class="price-display">${data.price_formatted}</div>
           </div>
-          <p class="metrics" id="metrics"></p>
+
+          <div class="price-details-grid">
+            <div class="detail-card">
+              <div class="title">Vehicle</div>
+              <div class="val" style="font-size: 1rem;">${carDesc}</div>
+            </div>
+            <div class="detail-card">
+              <div class="title">Mileage & Usage</div>
+              <div class="val">${payload.km_driven.toLocaleString("en-IN")} km</div>
+            </div>
+            <div class="detail-card">
+              <div class="title">Model Confidence</div>
+              <div class="val" style="color: #4CAF50;">94.1% R²</div>
+            </div>
+          </div>
         `;
-        if (metadata.metrics) {
-          document.getElementById("metrics").textContent =
-            `Model accuracy: R² ${metadata.metrics.r2} · typical error ±₹${metadata.metrics.mae.toLocaleString("en-IN")}`;
-        }
-      } catch (error) {
-        result.className = "card result";
-        result.innerHTML = `<div class="error">${error.message}</motion.div>`;
+
+        // Launch celebratory Streamlit balloons!
+        launchBalloons();
+
+        // Smooth scroll to result
+        container.scrollIntoView({ behavior: "smooth", block: "nearest" });
+
+      } catch (err) {
+        container.innerHTML = `
+          <div style="background-color: #fee2e2; border: 1px solid #f87171; color: #991b1b; padding: 1.5rem; border-radius: 10px; margin-top: 1.5rem; text-align: center;">
+            <h3 style="margin-bottom: 0.5rem;">⚠️ Prediction Error</h3>
+            <p>${err.message}</p>
+          </div>
+        `;
       } finally {
         btn.disabled = false;
+        btn.innerHTML = `<span>🚀</span><span>Predict Price</span>`;
       }
-    };
+    });
 
+    // Start
     init();
   </script>
 </body>
