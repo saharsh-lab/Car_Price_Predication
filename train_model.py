@@ -1,7 +1,6 @@
 """Train and save the high-accuracy car price prediction ensemble model."""
 
 import json
-import pickle as pk
 from pathlib import Path
 
 import joblib
@@ -28,7 +27,6 @@ from preprocess import (
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_PATH = BASE_DIR / "Cardetails.csv"
-MODEL_PATH = BASE_DIR / "model.pkl"
 MODEL_JOBLIB_PATH = BASE_DIR / "model.joblib"
 METADATA_PATH = BASE_DIR / "public" / "metadata.json"
 
@@ -54,6 +52,12 @@ def build_metadata(car_data: pd.DataFrame, metrics: dict) -> dict:
             "seats": [int(car_data["seats"].min()), int(car_data["seats"].max())],
         },
         "brand_defaults": {},
+        "stats": {
+            "records": int(len(car_data)),
+            "brands": len(brands),
+            "years": [int(car_data["year"].min()), int(car_data["year"].max())],
+        },
+        "market": build_market_insights(car_data),
     }
 
     for brand in brands:
@@ -72,6 +76,31 @@ def build_metadata(car_data: pd.DataFrame, metrics: dict) -> dict:
         }
 
     return metadata
+
+
+def build_market_insights(car_data: pd.DataFrame) -> dict:
+    """Summarise observed listing prices per brand for the web app's market charts."""
+    brand_year = {}
+    for (brand, year), group in car_data.groupby(["name", "year"]):
+        brand_year.setdefault(brand, []).append(
+            [int(year), int(group["selling_price"].median()), int(len(group))]
+        )
+
+    brand_median = {
+        brand: [int(group["selling_price"].median()), int(len(group))]
+        for brand, group in car_data.groupby("name")
+    }
+
+    return {"brand_year": brand_year, "brand_median": brand_median}
+
+
+def export_metadata_only() -> None:
+    """Regenerate public/metadata.json from the dataset without retraining the model."""
+    metrics = json.loads(METADATA_PATH.read_text()).get("metrics", {}) if METADATA_PATH.exists() else {}
+
+    metadata = build_metadata(prepare_car_data(DATA_PATH), metrics)
+    METADATA_PATH.write_text(json.dumps(metadata, indent=2))
+    print(f"Saved metadata to {METADATA_PATH}")
 
 
 def build_ensemble_model(cat_mask: list) -> TransformedTargetRegressor:
@@ -178,18 +207,6 @@ def train_and_save() -> None:
     METADATA_PATH.write_text(json.dumps(metadata, indent=2))
     print(f"\nSaved metadata to {METADATA_PATH}")
 
-    # Save model artifact dictionary for app.py and app2.py
-    artifact = {
-        "model": model,
-        "feature_columns": ALL_FEATURE_COLUMNS,
-        "base_feature_columns": FEATURE_COLUMNS,
-        "label_maps": LABEL_MAPS,
-        "metrics": metrics,
-    }
-    with open(MODEL_PATH, "wb") as model_file:
-        pk.dump(artifact, model_file, protocol=pk.HIGHEST_PROTOCOL)
-    print(f"Saved artifact dictionary to {MODEL_PATH} ({MODEL_PATH.stat().st_size / 1e6:.2f} MB)")
-
     # Save compressed model for api/predict.py
     joblib.dump(model, MODEL_JOBLIB_PATH, compress=3)
     print(f"Saved compressed model to {MODEL_JOBLIB_PATH} ({MODEL_JOBLIB_PATH.stat().st_size / 1e6:.2f} MB)")
@@ -212,4 +229,9 @@ def train_and_save() -> None:
 
 
 if __name__ == "__main__":
-    train_and_save()
+    import sys
+
+    if "--metadata-only" in sys.argv:
+        export_metadata_only()
+    else:
+        train_and_save()
