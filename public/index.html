@@ -3,876 +3,1850 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🚗 Car Price Prediction App 🚘</title>
+  <title>Karat · Used Car Valuation</title>
+  <meta name="description" content="Karat estimates the fair resale price of a used car in India, in rupees, from eleven specifications and thousands of real listings." />
+  <meta name="theme-color" content="#111315" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23111315'/%3E%3Cpath d='M7 13l4.5-5.5h9L25 13l-9 11.5z' fill='none' stroke='%23C6A875' stroke-width='1.8' stroke-linejoin='round'/%3E%3Cpath d='M7 13h18M13.5 13L16 24.5 18.5 13M11.5 7.5l2 5.5M20.5 7.5l-2 5.5' fill='none' stroke='%23C6A875' stroke-width='1.2' stroke-linejoin='round'/%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    // Apply a saved theme before first paint so there is no flash
+    try {
+      const saved = localStorage.getItem("karat-theme");
+      if (saved === "light" || saved === "dark") document.documentElement.dataset.theme = saved;
+    } catch (e) {}
+  </script>
   <style>
+    /* ───────────────────────── Tokens ───────────────────────── */
     :root {
-      --primary: #2a9df4;
-      --primary-dark: #1b7bc8;
-      --success: #4CAF50;
-      --success-dark: #3e8e41;
-      --bg: #ffffff;
-      --sidebar-bg: #f0f2f6;
-      --sidebar-border: #e6e9ef;
-      --text-main: #262730;
-      --text-muted: #555867;
-      --card-bg: #ffffff;
-      --input-bg: #ffffff;
-      --input-border: #d1d5db;
-      --input-focus: #2a9df4;
-      --shadow: 0 4px 20px rgba(0,0,0,0.06);
+      --charcoal: #111315;
+      --graphite: #1C2024;
+      --champagne: #C6A875;
+      --soft-white: #F3F2EE;
+
+      --bg: #F3F2EE;
+      --bg-2: #ECEAE4;
+      --surface: #FBFAF7;
+      --surface-2: #F1EFE9;
+      --field: #FFFFFF;
+      --line: rgba(17, 19, 21, 0.09);
+      --line-strong: rgba(17, 19, 21, 0.16);
+      --text: #111315;
+      --text-2: #4A4E53;
+      --text-3: #75787C;
+      --gold: #C6A875;
+      --gold-text: #7E602A;
+      --gold-wash: rgba(198, 168, 117, 0.16);
+      --on-gold: #111315;
+      --track: rgba(17, 19, 21, 0.12);
+      --shadow: 0 1px 2px rgba(17, 19, 21, 0.04), 0 18px 48px -18px rgba(17, 19, 21, 0.18);
+      --glow: rgba(198, 168, 117, 0.35);
+      --nav-bg: rgba(243, 242, 238, 0.78);
+
+      --chart-1: #B58A2E;
+      --chart-2: #3D72B8;
+      --chart-muted: #C9C5BA;
+      --grid: rgba(17, 19, 21, 0.07);
+      --axis: rgba(17, 19, 21, 0.22);
+
+      --danger-bg: #FBEDEA;
+      --danger-text: #8F2B1F;
+
+      --radius: 22px;
+      --radius-sm: 12px;
+      --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+      color-scheme: light;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #111315;
+        --bg-2: #0C0D0F;
+        --surface: #1C2024;
+        --surface-2: #23282D;
+        --field: #15181B;
+        --line: rgba(243, 242, 238, 0.08);
+        --line-strong: rgba(243, 242, 238, 0.15);
+        --text: #F3F2EE;
+        --text-2: #B4B3AE;
+        --text-3: #85878A;
+        --gold-text: #C6A875;
+        --gold-wash: rgba(198, 168, 117, 0.12);
+        --track: rgba(243, 242, 238, 0.12);
+        --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 24px 60px -24px rgba(0, 0, 0, 0.7);
+        --glow: rgba(198, 168, 117, 0.22);
+        --nav-bg: rgba(17, 19, 21, 0.72);
+        --chart-1: #B48C3E;
+        --chart-2: #4D86CC;
+        --chart-muted: #3A4047;
+        --grid: rgba(243, 242, 238, 0.06);
+        --axis: rgba(243, 242, 238, 0.2);
+        --danger-bg: #2B1A18;
+        --danger-text: #F0A99E;
+        color-scheme: dark;
+      }
     }
 
+    :root[data-theme="dark"] {
+      --bg: #111315;
+      --bg-2: #0C0D0F;
+      --surface: #1C2024;
+      --surface-2: #23282D;
+      --field: #15181B;
+      --line: rgba(243, 242, 238, 0.08);
+      --line-strong: rgba(243, 242, 238, 0.15);
+      --text: #F3F2EE;
+      --text-2: #B4B3AE;
+      --text-3: #85878A;
+      --gold-text: #C6A875;
+      --gold-wash: rgba(198, 168, 117, 0.12);
+      --track: rgba(243, 242, 238, 0.12);
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 24px 60px -24px rgba(0, 0, 0, 0.7);
+      --glow: rgba(198, 168, 117, 0.22);
+      --nav-bg: rgba(17, 19, 21, 0.72);
+      --chart-1: #B48C3E;
+      --chart-2: #4D86CC;
+      --chart-muted: #3A4047;
+      --grid: rgba(243, 242, 238, 0.06);
+      --axis: rgba(243, 242, 238, 0.2);
+      --danger-bg: #2B1A18;
+      --danger-text: #F0A99E;
+      color-scheme: dark;
+    }
+
+    /* ───────────────────────── Base ───────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    [hidden] { display: none !important; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+    html.theme-anim, html.theme-anim *, html.theme-anim *::before, html.theme-anim *::after {
+      transition: background-color 0.45s var(--ease), border-color 0.45s var(--ease), color 0.45s var(--ease), fill 0.45s var(--ease), stroke 0.45s var(--ease) !important;
+    }
     body {
-      font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: var(--bg);
-      color: var(--text-main);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+      font-family: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    button, input, select { font: inherit; color: inherit; }
+    :focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 6px; }
+    .wrap { width: 100%; max-width: 1240px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px); }
+    .serif { font-family: "Instrument Serif", Georgia, serif; font-weight: 400; }
+    em { font-family: "Instrument Serif", Georgia, serif; font-style: italic; font-weight: 400; color: var(--gold-text); }
+
+    /* ───────────────────────── Buttons ───────────────────────── */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem;
+      border: 1px solid transparent; border-radius: 999px; cursor: pointer;
+      padding: 0.9rem 1.5rem; font-weight: 700; font-size: 0.95rem; letter-spacing: 0.01em;
+      transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease), background-color 0.25s var(--ease), border-color 0.25s var(--ease);
+      white-space: nowrap;
+    }
+    .btn svg { width: 18px; height: 18px; transition: transform 0.25s var(--ease); }
+    .btn:hover svg { transform: translateX(3px); }
+    .btn-gold { background: var(--gold); color: var(--on-gold); box-shadow: 0 10px 30px -10px var(--glow), inset 0 1px 0 rgba(255,255,255,0.35); }
+    .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 16px 36px -12px var(--glow), inset 0 1px 0 rgba(255,255,255,0.35); }
+    .btn-gold:active { transform: translateY(0); }
+    .btn-gold:disabled { opacity: 0.7; cursor: progress; transform: none; }
+    .btn-ghost { border-color: var(--line-strong); color: var(--text); background: transparent; }
+    .btn-ghost:hover { border-color: var(--gold); background: var(--gold-wash); }
+    .btn-sm { padding: 0.6rem 1.1rem; font-size: 0.85rem; }
+    .btn-block { width: 100%; padding: 1.05rem 1.5rem; font-size: 1rem; }
+
+    /* ───────────────────────── Nav ───────────────────────── */
+    .nav { position: sticky; top: 0; z-index: 50; transition: background-color 0.3s, border-color 0.3s; border-bottom: 1px solid transparent; }
+    .nav.scrolled { background: var(--nav-bg); backdrop-filter: saturate(160%) blur(16px); -webkit-backdrop-filter: saturate(160%) blur(16px); border-bottom-color: var(--line); }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 72px; gap: 1rem; }
+    .brand { display: inline-flex; align-items: center; gap: 0.7rem; }
+    .brand-mark { width: 30px; height: 30px; flex: none; }
+    .gem { fill: var(--gold-wash); stroke: var(--gold); stroke-width: 1.6; stroke-linejoin: round; }
+    .facet { fill: none; stroke: var(--gold); stroke-width: 1.1; stroke-linejoin: round; }
+    .brand-word { font-weight: 800; letter-spacing: 0.34em; font-size: 0.98rem; margin-right: -0.34em; }
+    .nav-links { display: flex; gap: 2.2rem; font-size: 0.9rem; font-weight: 600; color: var(--text-2); }
+    .nav-links a { position: relative; padding: 0.3rem 0; transition: color 0.2s; }
+    .nav-links a::after { content: ""; position: absolute; left: 0; right: 0; bottom: -2px; height: 1px; background: var(--gold); transform: scaleX(0); transform-origin: left; transition: transform 0.3s var(--ease); }
+    .nav-links a:hover { color: var(--text); }
+    .nav-links a:hover::after { transform: scaleX(1); }
+    .nav-actions { display: flex; align-items: center; gap: 0.75rem; }
+    .icon-btn {
+      width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--line-strong); background: transparent;
+      display: grid; place-items: center; cursor: pointer; color: var(--text); transition: border-color 0.2s, background-color 0.2s, transform 0.4s var(--ease);
+    }
+    .icon-btn:hover { border-color: var(--gold); background: var(--gold-wash); }
+    .icon-btn svg { width: 18px; height: 18px; }
+    .icon-btn .moon { display: none; }
+    :root[data-theme="dark"] .icon-btn .sun { display: none; }
+    :root[data-theme="dark"] .icon-btn .moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .icon-btn .sun { display: none; }
+      :root:not([data-theme="light"]) .icon-btn .moon { display: block; }
     }
 
-    /* Main App Layout */
-    .st-app-container {
-      display: flex;
-      flex: 1;
-      min-height: 100vh;
+    /* ───────────────────────── Hero ───────────────────────── */
+    .hero { position: relative; padding: clamp(2rem, 6vw, 4.5rem) 0 clamp(3rem, 6vw, 5rem); overflow: hidden; }
+    .hero::before {
+      content: ""; position: absolute; inset: -20% -10% auto auto; width: 70vw; height: 70vw; max-width: 900px; max-height: 900px;
+      background: radial-gradient(closest-side, var(--glow), transparent 70%); opacity: 0.55; pointer-events: none;
     }
-
-    /* Sidebar Styling (Streamlit exact feel) */
-    .st-sidebar {
-      width: 380px;
-      min-width: 340px;
-      background-color: var(--sidebar-bg);
-      border-right: 1px solid var(--sidebar-border);
-      padding: 2rem 1.5rem;
-      overflow-y: auto;
-      height: 100vh;
-      position: sticky;
-      top: 0;
+    .hero::after {
+      content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0.5;
+      background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+      background-size: 64px 64px;
+      -webkit-mask-image: radial-gradient(ellipse 60% 60% at 70% 40%, #000 20%, transparent 75%);
+              mask-image: radial-gradient(ellipse 60% 60% at 70% 40%, #000 20%, transparent 75%);
     }
-
-    .st-sidebar-header {
-      font-size: 1.35rem;
-      font-weight: 700;
-      color: var(--text-main);
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+    .hero-grid { position: relative; z-index: 1; display: grid; grid-template-columns: 1.05fr 1fr; gap: clamp(1.5rem, 4vw, 3.5rem); align-items: center; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 0.6rem; padding: 0.45rem 0.9rem 0.45rem 0.7rem; border-radius: 999px;
+      border: 1px solid var(--line-strong); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-2);
+      background: var(--surface);
     }
+    .eyebrow .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 0 4px var(--gold-wash); }
+    .display { font-family: "Instrument Serif", Georgia, serif; font-weight: 400; font-size: clamp(2.8rem, 6vw, 5.2rem); line-height: 0.98; letter-spacing: -0.015em; margin: 1.4rem 0 1.3rem; }
+    .lede { font-size: clamp(1rem, 1.3vw, 1.12rem); color: var(--text-2); max-width: 34rem; }
+    .cta-row { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 2rem; }
+    .hero-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; margin-top: 3rem; border-top: 1px solid var(--line); }
+    .hero-stats > div { padding: 1.1rem 1rem 0 0; }
+    .hero-stats > div + div { padding-left: 1rem; border-left: 1px solid var(--line); }
+    .hero-stats dt { font-size: 0.74rem; font-weight: 600; color: var(--text-3); letter-spacing: 0.04em; }
+    .hero-stats dd { font-size: clamp(1.25rem, 2vw, 1.6rem); font-weight: 700; margin-top: 0.2rem; letter-spacing: -0.01em; }
 
-    /* Form Inputs */
-    .form-group {
-      margin-bottom: 1.25rem;
+    .hero-stage { position: relative; aspect-ratio: 1.08; width: 100%; border-radius: 28px; touch-action: pan-y; }
+    .stage-plate {
+      position: absolute; inset: 6% 2% 2%; border-radius: 28px;
+      background: radial-gradient(120% 90% at 50% 0%, var(--surface) 0%, transparent 70%);
+      border: 1px solid var(--line);
     }
-
-    .form-group label {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.88rem;
-      font-weight: 600;
-      color: var(--text-main);
-      margin-bottom: 0.4rem;
+    .stage-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; opacity: 0; transition: opacity 1.2s var(--ease); }
+    .stage-canvas.ready { opacity: 1; }
+    .stage-canvas:active { cursor: grabbing; }
+    .stage-fallback { position: absolute; left: 8%; right: 8%; top: 50%; transform: translateY(-50%); transition: opacity 0.6s; }
+    .hero-stage.has-3d .stage-fallback { opacity: 0; }
+    .stage-tag {
+      position: absolute; left: 6%; bottom: 7%; display: flex; align-items: center; gap: 0.6rem;
+      font-size: 0.75rem; font-weight: 600; color: var(--text-3); letter-spacing: 0.06em; text-transform: uppercase; pointer-events: none;
     }
-
-    .val-badge {
-      background: #e2e8f0;
-      color: #334155;
-      font-size: 0.8rem;
-      font-weight: 600;
-      padding: 0.15rem 0.5rem;
-      border-radius: 4px;
+    .stage-tag svg { width: 16px; height: 16px; }
+    .stage-card {
+      position: absolute; right: 4%; top: 12%; padding: 0.9rem 1.1rem; border-radius: 16px; min-width: 180px;
+      background: var(--nav-bg); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--line-strong); box-shadow: var(--shadow); pointer-events: none;
+      animation: float 6s ease-in-out infinite;
     }
+    .stage-card .k { font-size: 0.68rem; font-weight: 700; color: var(--text-3); letter-spacing: 0.12em; text-transform: uppercase; }
+    .stage-card .v { font-size: 1.35rem; font-weight: 800; margin-top: 0.15rem; letter-spacing: -0.01em; }
+    .stage-card .s { font-size: 0.75rem; color: var(--text-2); }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 
-    /* Select Inputs with High Contrast */
-    .select-wrapper {
-      position: relative;
-    }
+    /* Brand ribbon */
+    .ribbon { border-block: 1px solid var(--line); overflow: hidden; padding: 1.1rem 0; position: relative; }
+    .ribbon::before, .ribbon::after { content: ""; position: absolute; top: 0; bottom: 0; width: 12%; z-index: 1; pointer-events: none; }
+    .ribbon::before { left: 0; background: linear-gradient(90deg, var(--bg), transparent); }
+    .ribbon::after { right: 0; background: linear-gradient(-90deg, var(--bg), transparent); }
+    .ribbon-track { display: flex; gap: 3rem; width: max-content; animation: marquee 60s linear infinite; }
+    .ribbon-track span { font-size: 0.82rem; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; color: var(--text-3); white-space: nowrap; display: inline-flex; align-items: center; gap: 3rem; }
+    .ribbon-track span::after { content: "◆"; font-size: 0.5rem; color: var(--gold); }
+    @keyframes marquee { to { transform: translateX(-50%); } }
 
-    select {
-      width: 100%;
-      background-color: #ffffff !important;
-      color: #1e293b !important;
-      border: 1px solid var(--input-border);
-      border-radius: 8px;
-      padding: 0.65rem 2.2rem 0.65rem 0.85rem;
-      font-size: 0.95rem;
-      font-family: inherit;
-      font-weight: 500;
-      cursor: pointer;
-      appearance: none;
-      -webkit-appearance: none;
-      outline: none;
+    /* ───────────────────────── Sections ───────────────────────── */
+    .section { padding: clamp(4rem, 9vw, 7rem) 0; position: relative; scroll-margin-top: 40px; }
+    .section-head { max-width: 46rem; margin-bottom: clamp(2rem, 4vw, 3rem); }
+    .kicker { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold-text); }
+    .h2 { font-size: clamp(2rem, 4vw, 3.1rem); font-weight: 700; letter-spacing: -0.025em; line-height: 1.08; margin: 0.8rem 0 0.9rem; }
+    .h2 em { font-size: 1.06em; }
+    .section-sub { color: var(--text-2); font-size: 1.04rem; }
+
+    .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+
+    /* ───────────────────────── Valuation studio ───────────────────────── */
+    .studio { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: clamp(1rem, 2.5vw, 1.75rem); align-items: start; }
+    .form-card { padding: clamp(1.25rem, 3vw, 2.25rem); }
+    .group { border: 0; padding: 0; }
+    .group + .group { margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--line); }
+    .group legend { display: flex; align-items: center; gap: 0.75rem; font-weight: 700; font-size: 1.02rem; margin-bottom: 1.25rem; }
+    .group legend .num { font-size: 0.72rem; font-weight: 800; color: var(--gold-text); letter-spacing: 0.1em; border: 1px solid var(--line-strong); border-radius: 999px; padding: 0.2rem 0.55rem; }
+    .fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.4rem 1.5rem; }
+    .field.span-2 { grid-column: span 2; }
+    .field-row { display: flex; justify-content: space-between; align-items: baseline; gap: 0.75rem; margin-bottom: 0.55rem; }
+    .field label, .field .field-label { font-size: 0.82rem; font-weight: 600; color: var(--text-2); }
+    .field > label { display: block; margin-bottom: 0.55rem; }
+    .field output { font-weight: 700; font-size: 0.92rem; font-variant-numeric: tabular-nums; color: var(--text); transition: color 0.3s; }
+    .field output.bump { animation: bump 0.5s var(--ease); }
+    @keyframes bump { 40% { color: var(--gold-text); } }
+
+    .select { position: relative; }
+    .select select {
+      width: 100%; appearance: none; -webkit-appearance: none; cursor: pointer;
+      background: var(--field); border: 1px solid var(--line-strong); border-radius: var(--radius-sm);
+      padding: 0.8rem 2.6rem 0.8rem 0.95rem; font-weight: 600; font-size: 0.95rem;
       transition: border-color 0.2s, box-shadow 0.2s;
     }
+    .select select:hover { border-color: var(--gold); }
+    .select select:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 4px var(--gold-wash); }
+    .select select option { background: var(--surface); color: var(--text); }
+    .select svg { position: absolute; right: 0.95rem; top: 50%; width: 16px; height: 16px; transform: translateY(-50%); pointer-events: none; color: var(--text-3); }
 
-    select:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(42, 157, 244, 0.2);
+    .segment { display: flex; flex-wrap: wrap; gap: 4px; padding: 4px; border-radius: var(--radius-sm); background: var(--surface-2); border: 1px solid var(--line); }
+    .segment input { position: absolute; opacity: 0; pointer-events: none; }
+    .segment label {
+      flex: 1 1 auto; text-align: center; cursor: pointer; padding: 0.55rem 0.7rem; border-radius: 9px;
+      font-size: 0.85rem; font-weight: 600; color: var(--text-2); transition: background-color 0.25s var(--ease), color 0.25s, box-shadow 0.25s;
+      white-space: nowrap;
     }
-
-    select option {
-      background-color: #ffffff !important;
-      color: #1e293b !important;
-      padding: 0.5rem;
-      font-size: 0.95rem;
-    }
-
-    .select-arrow {
-      position: absolute;
-      right: 0.85rem;
-      top: 50%;
-      transform: translateY(-50%);
-      pointer-events: none;
-      width: 14px;
-      height: 14px;
-      fill: #64748b;
-    }
-
-    /* Range Sliders */
-    .range-wrap {
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-    }
+    .segment label:hover { color: var(--text); }
+    .segment input:checked + label { background: var(--gold); color: var(--on-gold); box-shadow: 0 6px 16px -8px var(--glow); }
+    .segment input:focus-visible + label { outline: 2px solid var(--gold); outline-offset: 2px; }
 
     input[type="range"] {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 100%;
-      height: 6px;
-      background: #cbd5e1;
-      border-radius: 3px;
-      outline: none;
-      margin: 0.6rem 0 0.2rem;
-      cursor: pointer;
+      -webkit-appearance: none; appearance: none; width: 100%; height: 22px; background: transparent; cursor: pointer; display: block;
+      --pct: 50%;
     }
-
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 4px; border-radius: 4px;
+      background: linear-gradient(90deg, var(--gold) 0 var(--pct), var(--track) var(--pct) 100%);
+    }
+    input[type="range"]::-moz-range-track { height: 4px; border-radius: 4px; background: var(--track); }
+    input[type="range"]::-moz-range-progress { height: 4px; border-radius: 4px; background: var(--gold); }
     input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 18px;
-      height: 18px;
-      background: var(--primary);
-      border: 2px solid #ffffff;
-      border-radius: 50%;
-      cursor: pointer;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.25);
-      transition: transform 0.1s, background 0.2s;
+      -webkit-appearance: none; appearance: none; width: 20px; height: 20px; margin-top: -8px; border-radius: 50%;
+      background: var(--soft-white); border: 5px solid var(--gold); box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+      transition: transform 0.2s var(--ease), box-shadow 0.2s;
     }
-
-    input[type="range"]::-webkit-slider-thumb:hover {
-      transform: scale(1.15);
-      background: var(--primary-dark);
+    input[type="range"]::-moz-range-thumb {
+      width: 12px; height: 12px; border-radius: 50%; background: var(--soft-white); border: 5px solid var(--gold); box-shadow: 0 2px 8px rgba(0,0,0,0.25);
     }
+    input[type="range"]:hover::-webkit-slider-thumb { transform: scale(1.12); }
+    input[type="range"]:focus-visible { outline: none; }
+    input[type="range"]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 6px var(--gold-wash); }
+    input[type="range"]:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 6px var(--gold-wash); }
+    .range-ends { display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-3); margin-top: 0.15rem; font-variant-numeric: tabular-nums; }
+    .hint { font-size: 0.76rem; color: var(--gold-text); margin-top: 0.4rem; }
+    .form-foot { margin-top: 2rem; display: grid; gap: 0.8rem; }
+    .form-note { font-size: 0.78rem; color: var(--text-3); text-align: center; }
+    .form-card.flash { animation: flash 0.9s var(--ease); }
+    @keyframes flash { 30% { box-shadow: var(--shadow), 0 0 0 1px var(--gold), 0 0 40px -10px var(--glow); } }
 
-    .range-limits {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.72rem;
-      color: #94a3b8;
+    /* Result card */
+    .result-col { position: sticky; top: 92px; }
+    .result-card { padding: clamp(1.25rem, 3vw, 2rem); min-height: 520px; position: relative; overflow: hidden; }
+    .result-card::before {
+      content: ""; position: absolute; inset: -40% -30% auto; height: 70%;
+      background: radial-gradient(closest-side, var(--glow), transparent); opacity: 0; transition: opacity 0.8s var(--ease); pointer-events: none;
     }
+    .result-card[data-state="value"]::before { opacity: 0.6; }
+    .state { display: none; position: relative; }
+    .result-card[data-state="empty"] .state-empty,
+    .result-card[data-state="loading"] .state-loading,
+    .result-card[data-state="value"] .state-value,
+    .result-card[data-state="error"] .state-error { display: block; animation: rise 0.6s var(--ease) both; }
+    @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 
-    /* Streamlit-styled Action Button */
-    .st-predict-btn {
-      width: 100%;
-      background: linear-gradient(135deg, #2a9df4, #1d6fb8);
-      color: #ffffff;
-      border: none;
-      border-radius: 8px;
-      padding: 0.85rem 1rem;
-      font-size: 1.05rem;
-      font-weight: 700;
-      font-family: inherit;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      box-shadow: 0 4px 12px rgba(42, 157, 244, 0.35);
-      transition: all 0.2s ease;
-      margin-top: 1.5rem;
+    .state-empty { text-align: center; padding: 2.5rem 0.5rem; }
+    .tilt { perspective: 900px; margin: 0 auto 1.75rem; max-width: 300px; }
+    .tilt svg { width: 100%; transition: transform 0.4s var(--ease); transform: rotateX(8deg) rotateY(-14deg); filter: drop-shadow(0 18px 18px rgba(0,0,0,0.18)); }
+    .car-body { fill: var(--gold-wash); stroke: var(--gold); stroke-width: 1.4; stroke-linejoin: round; }
+    .car-glass { fill: var(--surface-2); stroke: var(--gold); stroke-width: 1.1; }
+    .car-tyre { fill: var(--surface); stroke: var(--gold); stroke-width: 1.4; }
+    .car-rim { fill: none; stroke: var(--gold); stroke-width: 1; }
+    .car-ground { stroke: var(--line-strong); stroke-width: 1; }
+    .state-empty h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.45rem; }
+    .state-empty p { color: var(--text-2); font-size: 0.92rem; max-width: 22rem; margin: 0 auto; }
+
+    .state-loading { padding: 1rem 0; }
+    .skeleton { border-radius: 10px; background: linear-gradient(90deg, var(--surface-2) 0%, var(--gold-wash) 50%, var(--surface-2) 100%); background-size: 200% 100%; animation: shimmer 1.3s linear infinite; }
+    @keyframes shimmer { to { background-position: -200% 0; } }
+    .loading-label { display: flex; align-items: center; gap: 0.6rem; color: var(--text-2); font-weight: 600; font-size: 0.9rem; margin-bottom: 1.5rem; }
+    .spinner { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--track); border-top-color: var(--gold); animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .res-label { display: flex; align-items: center; justify-content: space-between; gap: 1rem; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3); }
+    .stale-pill { font-size: 0.68rem; letter-spacing: 0.06em; text-transform: none; font-weight: 700; color: var(--gold-text); border: 1px solid var(--gold); border-radius: 999px; padding: 0.15rem 0.6rem; }
+    .price { font-size: clamp(2.4rem, 4.6vw, 3.5rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; margin-top: 0.6rem; }
+    .price-sub { color: var(--text-2); font-size: 0.95rem; margin-top: 0.35rem; }
+    .price-sub strong { color: var(--text); font-weight: 700; }
+
+    .band { margin-top: 1.75rem; }
+    .band-head { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--text-3); font-weight: 600; margin-bottom: 0.6rem; }
+    .band-track { position: relative; height: 8px; border-radius: 8px; background: var(--track); }
+    .band-fill { position: absolute; left: 12%; right: 12%; top: 0; bottom: 0; border-radius: 8px; background: linear-gradient(90deg, transparent, var(--gold) 50%, transparent); opacity: 0.85; transform-origin: center; animation: grow 0.9s var(--ease) both; }
+    .band-pin { position: absolute; left: 50%; top: 50%; width: 16px; height: 16px; border-radius: 50%; background: var(--gold); border: 3px solid var(--surface); transform: translate(-50%, -50%); box-shadow: 0 0 0 1px var(--gold); }
+    @keyframes grow { from { transform: scaleX(0.1); opacity: 0; } }
+    .band-ends { display: flex; justify-content: space-between; margin-top: 0.6rem; font-weight: 700; font-size: 0.92rem; }
+    .band-ends span small { display: block; font-size: 0.7rem; color: var(--text-3); font-weight: 600; }
+    .band-ends span:last-child { text-align: right; }
+
+    .compare { display: flex; gap: 0.75rem; align-items: flex-start; margin-top: 1.5rem; padding: 0.95rem 1rem; border-radius: 14px; background: var(--surface-2); border: 1px solid var(--line); font-size: 0.88rem; color: var(--text-2); }
+    .compare svg { width: 18px; height: 18px; flex: none; margin-top: 2px; color: var(--gold-text); }
+    .compare strong { color: var(--text); }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 1.4rem; }
+    .chip { font-size: 0.78rem; font-weight: 600; padding: 0.35rem 0.7rem; border-radius: 999px; border: 1px solid var(--line-strong); color: var(--text-2); }
+    .res-meta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--line); }
+    .res-meta div { font-size: 0.75rem; color: var(--text-3); font-weight: 600; }
+    .res-meta b { display: block; color: var(--text); font-size: 1rem; margin-top: 0.1rem; }
+    .res-link { display: inline-flex; align-items: center; gap: 0.4rem; margin-top: 1.4rem; font-weight: 700; font-size: 0.88rem; color: var(--gold-text); }
+    .res-link svg { width: 16px; height: 16px; transition: transform 0.25s var(--ease); }
+    .res-link:hover svg { transform: translateY(3px); }
+
+    .state-error { padding: 2rem 0.5rem; text-align: center; }
+    .error-box { background: var(--danger-bg); color: var(--danger-text); border-radius: 14px; padding: 1.25rem; font-size: 0.92rem; }
+    .error-box h3 { font-size: 1.05rem; margin-bottom: 0.35rem; }
+
+    /* ───────────────────────── Insights ───────────────────────── */
+    .tabs { display: inline-flex; gap: 4px; padding: 4px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); margin-bottom: 1.25rem; max-width: 100%; overflow-x: auto; }
+    .tab { border: 0; background: transparent; cursor: pointer; padding: 0.6rem 1.1rem; border-radius: 999px; font-weight: 700; font-size: 0.86rem; color: var(--text-2); white-space: nowrap; transition: background-color 0.25s var(--ease), color 0.25s; }
+    .tab:hover { color: var(--text); }
+    .tab[aria-selected="true"] { background: var(--gold); color: var(--on-gold); }
+    .chart-card { padding: clamp(1.25rem, 3vw, 2rem); }
+    .chart-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+    .chart-title { font-size: 1.15rem; font-weight: 700; letter-spacing: -0.01em; }
+    .chart-sub { color: var(--text-2); font-size: 0.88rem; margin-top: 0.25rem; max-width: 40rem; }
+    .takeaway { font-size: 0.92rem; color: var(--text-2); max-width: 22rem; padding-left: 1rem; border-left: 2px solid var(--gold); }
+    .takeaway strong { color: var(--text); }
+    .legend { display: flex; flex-wrap: wrap; gap: 1.1rem; font-size: 0.8rem; color: var(--text-2); font-weight: 600; margin-bottom: 0.75rem; }
+    .legend span { display: inline-flex; align-items: center; gap: 0.5rem; }
+    .key-line { width: 16px; height: 2px; border-radius: 2px; display: inline-block; }
+    .key-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+    .bg-c1 { background: var(--chart-1); }
+    .bg-c2 { background: var(--chart-2); }
+    .bg-muted { background: var(--chart-muted); }
+    .chart { position: relative; width: 100%; min-height: 240px; }
+    .chart-panel { animation: rise 0.5s var(--ease) both; }
+    .chart-empty { display: grid; place-items: center; text-align: center; min-height: 260px; border: 1px dashed var(--line-strong); border-radius: 16px; color: var(--text-2); font-size: 0.92rem; padding: 1.5rem; }
+    .chart-svg { display: block; overflow: visible; }
+    .chart-svg:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+    .chart-svg .grid { stroke: var(--grid); stroke-width: 1; }
+    .chart-svg .axis { stroke: var(--axis); stroke-width: 1; }
+    .chart-svg .tick { fill: var(--text-3); font-size: 11px; font-variant-numeric: tabular-nums; font-family: inherit; }
+    .chart-svg .line { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+    .chart-svg .line.c1 { stroke: var(--chart-1); }
+    .chart-svg .line.c2 { stroke: var(--chart-2); }
+    .chart-svg .area.c1 { fill: var(--chart-1); opacity: 0.1; }
+    .chart-svg .dot { stroke: var(--surface); stroke-width: 2; }
+    .chart-svg .dot.c1 { fill: var(--chart-1); }
+    .chart-svg .dot.c2 { fill: var(--chart-2); }
+    .chart-svg .crosshair { stroke: var(--axis); stroke-width: 1; pointer-events: none; transition: opacity 0.15s; }
+    .chart-svg .hover-dot { stroke: var(--surface); stroke-width: 2; pointer-events: none; transition: opacity 0.15s; }
+    .chart-svg .hover-dot.c1 { fill: var(--chart-1); }
+    .chart-svg .hover-dot.c2 { fill: var(--chart-2); }
+    .chart-svg .focus-dot { fill: var(--chart-1); stroke: var(--surface); stroke-width: 3; }
+    .chart-svg .focus-halo { fill: var(--chart-1); opacity: 0.18; transform-box: fill-box; transform-origin: center; animation: halo 2.4s ease-out infinite; }
+    @keyframes halo { 0% { transform: scale(0.6); opacity: 0.35; } 100% { transform: scale(2.2); opacity: 0; } }
+    .chart-svg .focus-label { fill: var(--text); font-size: 12px; font-weight: 700; font-family: inherit; }
+    .chart-svg .focus-drop { stroke: var(--chart-1); stroke-width: 1; opacity: 0.5; }
+    .chart-svg .bar { fill: var(--chart-muted); transform-box: fill-box; transform-origin: left center; animation: barIn 0.8s var(--ease) both; transition: opacity 0.2s; }
+    .chart-svg .bar.is-you { fill: var(--chart-1); }
+    .chart-svg .bar-row:hover .bar, .chart-svg .bar-row.active .bar { opacity: 0.8; }
+    .chart-svg .bar-label { fill: var(--text-2); font-size: 12px; font-weight: 600; font-family: inherit; }
+    .chart-svg .bar-label.is-you { fill: var(--text); font-weight: 800; }
+    .chart-svg .bar-val { fill: var(--text-2); font-size: 11.5px; font-weight: 600; font-variant-numeric: tabular-nums; font-family: inherit; }
+    @keyframes barIn { from { transform: scaleX(0); } }
+    .chart-tip {
+      position: absolute; top: 0; left: 0; z-index: 3; pointer-events: none; min-width: 150px;
+      background: var(--surface); border: 1px solid var(--line-strong); border-radius: 12px; box-shadow: var(--shadow);
+      padding: 0.65rem 0.8rem; font-size: 0.8rem; opacity: 0; transform: translateY(4px); transition: opacity 0.15s, transform 0.15s;
     }
+    .chart-tip.show { opacity: 1; transform: none; }
+    .chart-tip .tip-head { font-size: 0.72rem; font-weight: 700; color: var(--text-3); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.35rem; }
+    .chart-tip .tip-row { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem; }
+    .chart-tip .tip-row b { font-size: 0.95rem; font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
+    .chart-tip .tip-row span { color: var(--text-2); }
+    .table-view { margin-top: 1rem; font-size: 0.85rem; }
+    .table-view summary { cursor: pointer; color: var(--text-3); font-weight: 600; width: max-content; }
+    .table-view summary:hover { color: var(--text); }
+    .table-scroll { max-height: 280px; overflow: auto; margin-top: 0.75rem; border: 1px solid var(--line); border-radius: 12px; }
+    .table-view table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+    .table-view th, .table-view td { padding: 0.5rem 0.9rem; text-align: right; border-bottom: 1px solid var(--line); }
+    .table-view th:first-child, .table-view td:first-child { text-align: left; }
+    .table-view th { position: sticky; top: 0; background: var(--surface-2); font-size: 0.75rem; color: var(--text-3); font-weight: 700; }
 
-    .st-predict-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 16px rgba(42, 157, 244, 0.45);
-      filter: brightness(1.05);
+    /* ───────────────────────── Method ───────────────────────── */
+    .method-section { background: var(--bg-2); border-block: 1px solid var(--line); }
+    .steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(1rem, 2vw, 1.5rem); }
+    .step { padding: 1.75rem; transition: transform 0.4s var(--ease), border-color 0.4s; }
+    .step:hover { transform: translateY(-4px); border-color: var(--gold); }
+    .step-num { font-family: "Instrument Serif", Georgia, serif; font-style: italic; font-size: 3rem; line-height: 1; color: var(--gold-text); }
+    .step h3 { font-size: 1.15rem; margin: 1rem 0 0.5rem; letter-spacing: -0.01em; }
+    .step p { color: var(--text-2); font-size: 0.92rem; }
+    .step ul { list-style: none; margin-top: 1rem; display: grid; gap: 0.4rem; }
+    .step li { font-size: 0.85rem; color: var(--text-2); position: relative; padding-left: 1rem; }
+    .step li::before { content: ""; position: absolute; left: 0; top: 0.55em; width: 5px; height: 5px; border-radius: 50%; background: var(--gold); }
+    .metric-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: clamp(1.5rem, 3vw, 2.5rem); }
+    .metric { padding: 1.5rem; }
+    .metric + .metric { border-left: 1px solid var(--line); }
+    .metric .v { font-size: clamp(1.6rem, 3vw, 2.3rem); font-weight: 800; letter-spacing: -0.02em; }
+    .metric .k { font-size: 0.82rem; color: var(--text-2); font-weight: 600; }
+    .metric .d { font-size: 0.76rem; color: var(--text-3); margin-top: 0.2rem; }
+
+    /* ───────────────────────── Footer ───────────────────────── */
+    footer { padding: 3rem 0 2.5rem; }
+    .foot { display: flex; justify-content: space-between; align-items: flex-start; gap: 2rem; flex-wrap: wrap; }
+    .foot p { color: var(--text-3); font-size: 0.85rem; max-width: 30rem; margin-top: 0.8rem; }
+    .foot-links { display: flex; gap: 1.5rem; font-size: 0.85rem; font-weight: 600; color: var(--text-2); }
+    .foot-links a:hover { color: var(--gold-text); }
+    .foot-bottom { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--line); font-size: 0.78rem; color: var(--text-3); display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+
+    /* Celebration canvas (champagne bubbles) */
+    #bubbles { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 100; }
+
+    /* Scroll reveal */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.9s var(--ease), transform 0.9s var(--ease); }
+    .reveal.in { opacity: 1; transform: none; }
+    .reveal.d1 { transition-delay: 0.08s; } .reveal.d2 { transition-delay: 0.16s; } .reveal.d3 { transition-delay: 0.24s; }
+
+    /* ───────────────────────── Responsive ───────────────────────── */
+    @media (max-width: 1024px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .hero-stage { max-width: 640px; margin: 0 auto; aspect-ratio: 1.35; }
+      .studio { grid-template-columns: 1fr; }
+      .result-col { position: static; }
+      .result-card { min-height: 0; }
     }
-
-    .st-predict-btn:active {
-      transform: translateY(1px);
+    @media (max-width: 760px) {
+      .nav-links { display: none; }
+      .hero-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 1rem; }
+      .hero-stats > div:nth-child(3) { padding-left: 0; border-left: 0; }
+      .fields { grid-template-columns: 1fr; }
+      .field.span-2 { grid-column: auto; }
+      .steps { grid-template-columns: 1fr; }
+      .metric-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .metric:nth-child(3) { border-left: 0; }
+      .metric:nth-child(n+3) { border-top: 1px solid var(--line); }
+      .stage-card { top: 4%; right: 2%; min-width: 0; padding: 0.7rem 0.9rem; }
+      .stage-card .v { font-size: 1.1rem; }
+      .takeaway { max-width: none; }
+      .tab { padding: 0.55rem 0.8rem; font-size: 0.8rem; }
     }
-
-    .st-predict-btn:disabled {
-      opacity: 0.65;
-      cursor: not-allowed;
-      transform: none;
+    @media (max-width: 420px) {
+      .nav-actions .btn { display: none; }
+      .cta-row .btn { flex: 1 1 100%; }
     }
-
-    /* Main Content Styling */
-    .st-main {
-      flex: 1;
-      padding: 2rem 3rem;
-      max-width: 900px;
-    }
-
-    /* Header Banner (Matches app.py style) */
-    .st-banner {
-      background-color: var(--primary);
-      padding: 1.25rem 1.5rem;
-      border-radius: 12px;
-      color: white;
-      text-align: center;
-      box-shadow: 0 8px 24px rgba(42, 157, 244, 0.25);
-      margin-bottom: 1.5rem;
-    }
-
-    .st-banner h1 {
-      font-size: 1.9rem;
-      font-weight: 800;
-      margin-bottom: 0.35rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-    }
-
-    .st-banner p {
-      font-size: 1rem;
-      opacity: 0.95;
-    }
-
-    /* Accuracy Caption */
-    .st-caption {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      margin-bottom: 2rem;
-      padding: 0.5rem 0.75rem;
-      background: #f1f5f9;
-      border-left: 4px solid var(--primary);
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-
-    /* Result Green Card (Matches app.py) */
-    .st-result-box {
-      background-color: var(--success);
-      padding: 2.25rem 2rem;
-      border-radius: 12px;
-      color: white;
-      text-align: center;
-      box-shadow: 0 10px 30px rgba(76, 175, 80, 0.3);
-      animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      margin-top: 1.5rem;
-    }
-
-    @keyframes popIn {
-      0% { transform: scale(0.95); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-
-    .st-result-box h2 {
-      font-size: 1.3rem;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-    }
-
-    .st-result-box .price-display {
-      font-size: 2.8rem;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-    }
-
-    .price-details-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
-      margin-top: 2rem;
-    }
-
-    .detail-card {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 10px;
-      padding: 1rem;
-      text-align: center;
-    }
-
-    .detail-card .title {
-      font-size: 0.78rem;
-      text-transform: uppercase;
-      font-weight: 700;
-      color: #64748b;
-      margin-bottom: 0.3rem;
-    }
-
-    .detail-card .val {
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: #1e293b;
-    }
-
-    /* Initial State Card */
-    .empty-state {
-      border: 2px dashed #cbd5e1;
-      border-radius: 12px;
-      padding: 3.5rem 2rem;
-      text-align: center;
-      color: #64748b;
-      margin-top: 1.5rem;
-    }
-
-    .empty-state svg {
-      width: 48px;
-      height: 48px;
-      stroke: #94a3b8;
-      margin-bottom: 1rem;
-    }
-
-    .empty-state h3 {
-      font-size: 1.15rem;
-      color: #334155;
-      margin-bottom: 0.5rem;
-    }
-
-    /* Canvas Balloons */
-    #balloon-canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      pointer-events: none;
-      z-index: 9999;
-    }
-
-    /* Footer */
-    footer {
-      margin-top: 3rem;
-      text-align: center;
-      color: #94a3b8;
-      font-size: 0.85rem;
-      border-top: 1px solid #e2e8f0;
-      padding-top: 1.5rem;
-    }
-
-    /* Responsive */
-    @media (max-width: 900px) {
-      .st-app-container {
-        flex-direction: column;
-      }
-      .st-sidebar {
-        width: 100%;
-        height: auto;
-        position: static;
-        border-right: none;
-        border-bottom: 1px solid var(--sidebar-border);
-      }
-      .st-main {
-        padding: 1.5rem 1rem;
-      }
-      .price-details-grid {
-        grid-template-columns: 1fr;
-      }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+      .reveal { opacity: 1; transform: none; }
+      .ribbon-track { animation: none; }
     }
   </style>
 </head>
 <body>
-  <canvas id="balloon-canvas"></canvas>
+  <canvas id="bubbles" aria-hidden="true"></canvas>
 
-  <div class="st-app-container">
-    <!-- Sidebar -->
-    <aside class="st-sidebar">
-      <div class="st-sidebar-header">
-        <span>📝</span>
-        <span>Enter Car Details</span>
-      </div>
+  <!-- Shared SVG symbols -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-gem" viewBox="0 0 32 32">
+      <path class="gem" d="M5 12.5L10.5 6h11l5.5 6.5L16 26.5z" />
+      <path class="facet" d="M5 12.5h22M13 12.5l3 14 3-14M10.5 6l2.5 6.5M21.5 6L19 12.5M13 12.5L16 6l3 6.5" />
+    </symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 11v5M12 8h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-rotate" viewBox="0 0 24 24"><path d="M3 12a9 4 0 1 0 9-4M12 8l-3-2.5M12 8l-3 2.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="car-line" viewBox="0 0 240 96">
+      <line class="car-ground" x1="6" y1="84" x2="234" y2="84" />
+      <path class="car-body" d="M12 70H40a20 20 0 0 1 38 0h84a20 20 0 0 1 38 0h28v-11q-1-9-14-12l-26-5q-22-17-50-20h-26q-26 2-46 20l-28 5q-14 3-16 12z" />
+      <path class="car-glass" d="M72 43q18-15 40-16h10v16z" />
+      <path class="car-glass" d="M128 27h12q24 2 40 16h-52z" />
+      <circle class="car-tyre" cx="59" cy="70" r="15" /><circle class="car-rim" cx="59" cy="70" r="7" />
+      <circle class="car-tyre" cx="181" cy="70" r="15" /><circle class="car-rim" cx="181" cy="70" r="7" />
+    </symbol>
+  </svg>
 
-      <form id="car-form">
-        <!-- Brand -->
-        <div class="form-group">
-          <label for="name">Select Car Brand</label>
-          <div class="select-wrapper">
-            <select id="name" name="name" required></select>
-            <svg class="select-arrow" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
-          </div>
-        </div>
-
-        <!-- Year -->
-        <div class="form-group">
-          <label for="year">
-            <span>Car Manufactured Year</span>
-            <span class="val-badge" id="year-badge">2014</span>
-          </label>
-          <div class="range-wrap">
-            <input id="year" name="year" type="range" min="1994" max="2024" value="2014" step="1" required />
-            <div class="range-limits">
-              <span id="year-min">1994</span>
-              <span id="year-max">2024</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Km Driven -->
-        <div class="form-group">
-          <label for="km_driven">
-            <span>No. of Kilometers Driven</span>
-            <span class="val-badge" id="km-badge">60,000 km</span>
-          </label>
-          <div class="range-wrap">
-            <input id="km_driven" name="km_driven" type="range" min="1000" max="250000" value="60000" step="1000" required />
-            <div class="range-limits">
-              <span>1,000 km</span>
-              <span>250,000 km</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Fuel Type -->
-        <div class="form-group">
-          <label for="fuel">Fuel Type</label>
-          <div class="select-wrapper">
-            <select id="fuel" name="fuel" required>
-              <option value="Diesel">Diesel</option>
-              <option value="Petrol" selected>Petrol</option>
-              <option value="CNG">CNG</option>
-              <option value="LPG">LPG</option>
-            </select>
-            <svg class="select-arrow" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
-          </div>
-        </div>
-
-        <!-- Seller Type -->
-        <div class="form-group">
-          <label for="seller_type">Seller Type</label>
-          <div class="select-wrapper">
-            <select id="seller_type" name="seller_type" required>
-              <option value="Individual" selected>Individual</option>
-              <option value="Dealer">Dealer</option>
-              <option value="Trustmark Dealer">Trustmark Dealer</option>
-            </select>
-            <svg class="select-arrow" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
-          </div>
-        </div>
-
-        <!-- Transmission -->
-        <div class="form-group">
-          <label for="transmission">Transmission Type</label>
-          <div class="select-wrapper">
-            <select id="transmission" name="transmission" required>
-              <option value="Manual" selected>Manual</option>
-              <option value="Automatic">Automatic</option>
-            </select>
-            <svg class="select-arrow" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
-          </div>
-        </div>
-
-        <!-- Owner -->
-        <div class="form-group">
-          <label for="owner">Owner</label>
-          <div class="select-wrapper">
-            <select id="owner" name="owner" required>
-              <option value="First Owner" selected>First Owner</option>
-              <option value="Second Owner">Second Owner</option>
-              <option value="Third Owner">Third Owner</option>
-              <option value="Fourth & Above Owner">Fourth & Above Owner</option>
-              <option value="Test Drive Car">Test Drive Car</option>
-            </select>
-            <svg class="select-arrow" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
-          </div>
-        </div>
-
-        <!-- Mileage -->
-        <div class="form-group">
-          <label for="mileage">
-            <span>Car Mileage (kmpl)</span>
-            <span class="val-badge" id="mileage-badge">19.0 kmpl</span>
-          </label>
-          <div class="range-wrap">
-            <input id="mileage" name="mileage" type="range" min="8.0" max="35.0" value="19.0" step="0.1" required />
-            <div class="range-limits">
-              <span>8.0 kmpl</span>
-              <span>35.0 kmpl</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Engine -->
-        <div class="form-group">
-          <label for="engine">
-            <span>Engine Capacity (CC)</span>
-            <span class="val-badge" id="engine-badge">1248 CC</span>
-          </label>
-          <div class="range-wrap">
-            <input id="engine" name="engine" type="range" min="600" max="3600" value="1248" step="10" required />
-            <div class="range-limits">
-              <span>600 CC</span>
-              <span>3600 CC</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Max Power -->
-        <div class="form-group">
-          <label for="max_power">
-            <span>Max Power (BHP)</span>
-            <span class="val-badge" id="power-badge">74.0 BHP</span>
-          </label>
-          <div class="range-wrap">
-            <input id="max_power" name="max_power" type="range" min="30.0" max="300.0" value="74.0" step="0.5" required />
-            <div class="range-limits">
-              <span>30.0 BHP</span>
-              <span>300.0 BHP</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Seats -->
-        <div class="form-group">
-          <label for="seats">
-            <span>Number of Seats</span>
-            <span class="val-badge" id="seats-badge">5</span>
-          </label>
-          <div class="range-wrap">
-            <input id="seats" name="seats" type="range" min="2" max="10" value="5" step="1" required />
-            <div class="range-limits">
-              <span>2 seats</span>
-              <span>10 seats</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Predict Button -->
-        <button type="submit" id="predict-btn" class="st-predict-btn">
-          <span>🚀</span>
-          <span>Predict Price</span>
+  <header class="nav" id="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="#top" aria-label="Karat, back to top">
+        <svg class="brand-mark" aria-hidden="true"><use href="#i-gem" /></svg>
+        <span class="brand-word">KARAT</span>
+      </a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="#valuate">Valuation</a>
+        <a href="#insights">Insights</a>
+        <a href="#method">Method</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="icon-btn" id="theme-toggle" type="button" aria-label="Toggle light and dark theme">
+          <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+          <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
         </button>
-      </form>
-    </aside>
-
-    <!-- Main Content Area -->
-    <main class="st-main">
-      <div class="st-banner">
-        <h1><span>🚗</span> Car Price Prediction App <span>🚘</span></h1>
-        <p>Enter the car details in the sidebar to get an estimated resale price!</p>
+        <a class="btn btn-gold btn-sm" href="#valuate">Value my car</a>
       </div>
+    </div>
+  </header>
 
-      <div class="st-caption" id="model-metrics-caption">
-        <span>📊</span>
-        <span id="caption-text">Model accuracy: 94.1% (R² 0.941) · typical error ±₹68,223 (15.9%)</span>
-      </div>
+  <main id="top">
+    <!-- ─────────────── Hero ─────────────── -->
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow reveal"><span class="dot"></span>Used-car valuation · India</p>
+          <h1 class="display reveal d1">Know what your car is <em>truly</em> worth.</h1>
+          <p class="lede reveal d2">
+            Karat assays a pre-owned car the way a jeweller assays gold. It reads eleven specifications,
+            learns from <span data-stat="records">6,717</span> real Indian listings, and returns a fair resale
+            price in rupees.
+          </p>
+          <div class="cta-row reveal d3">
+            <a class="btn btn-gold" href="#valuate">Value my car <svg><use href="#i-arrow" /></svg></a>
+            <a class="btn btn-ghost" href="#method">How it works</a>
+          </div>
+          <dl class="hero-stats reveal d3">
+            <div><dt>Model accuracy</dt><dd data-stat="accuracy">94.1%</dd></div>
+            <div><dt>Typical error</dt><dd data-stat="mae">±₹68K</dd></div>
+            <div><dt>Listings studied</dt><dd data-stat="records">6,717</dd></div>
+            <div><dt>Brands covered</dt><dd data-stat="brands">31</dd></div>
+          </dl>
+        </div>
 
-      <div id="result-container">
-        <div class="empty-state">
-          <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
-          </svg>
-          <h3>Ready for Prediction</h3>
-          <p>Adjust the vehicle specifications on the left sidebar and click <strong>"Predict Price"</strong>.</p>
+        <div class="hero-stage reveal d2" id="stage" aria-label="Interactive 3D car. Drag to rotate.">
+          <div class="stage-plate"></div>
+          <svg class="stage-fallback car-line" aria-hidden="true"><use href="#car-line" /></svg>
+          <div class="stage-card" aria-hidden="true">
+            <div class="k">Assayed value</div>
+            <div class="v" id="stage-price">₹11,55,622</div>
+            <div class="s" id="stage-car">2018 Hyundai · Diesel</div>
+          </div>
+          <div class="stage-tag" aria-hidden="true"><svg><use href="#i-rotate" /></svg>Drag to rotate</div>
         </div>
       </div>
+    </section>
 
-      <footer>
-        <p>Machine Learning Project · High-Accuracy Ensemble Regression Model</p>
-      </footer>
-    </main>
-  </div>
+    <div class="ribbon" aria-hidden="true"><div class="ribbon-track" id="ribbon"></div></div>
 
+    <!-- ─────────────── Valuation studio ─────────────── -->
+    <section class="section" id="valuate">
+      <div class="wrap">
+        <header class="section-head reveal">
+          <p class="kicker">01 · Valuation studio</p>
+          <h2 class="h2">Describe the car. <em>We'll do the assay.</em></h2>
+          <p class="section-sub">Pick a brand and Karat pre-fills its most typical specification from the dataset. Then fine-tune anything that differs from your car.</p>
+        </header>
+
+        <div class="studio">
+          <form id="car-form" class="card form-card reveal" novalidate>
+            <fieldset class="group">
+              <legend><span class="num">01</span>Identity</legend>
+              <div class="fields">
+                <div class="field">
+                  <label for="name">Brand</label>
+                  <div class="select">
+                    <select id="name" name="name" required></select>
+                    <svg><use href="#i-chev" /></svg>
+                  </div>
+                </div>
+                <div class="field">
+                  <div class="field-row"><label for="year">Model year</label><output for="year" data-out="year">2014</output></div>
+                  <input id="year" name="year" type="range" min="1994" max="2024" step="1" value="2014" />
+                  <div class="range-ends"><span>1994</span><span>2024</span></div>
+                  <p class="hint" id="year-hint" hidden>Newer than the dataset's latest year, so this estimate is extrapolated.</p>
+                </div>
+                <div class="field">
+                  <span class="field-label" id="fuel-label">Fuel</span>
+                  <div class="segment" data-segment="fuel" role="radiogroup" aria-labelledby="fuel-label" style="margin-top:0.55rem"></div>
+                </div>
+                <div class="field">
+                  <span class="field-label" id="transmission-label">Transmission</span>
+                  <div class="segment" data-segment="transmission" role="radiogroup" aria-labelledby="transmission-label" style="margin-top:0.55rem"></div>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset class="group">
+              <legend><span class="num">02</span>History</legend>
+              <div class="fields">
+                <div class="field span-2">
+                  <div class="field-row"><label for="km_driven">Kilometres driven</label><output for="km_driven" data-out="km_driven">60,000 km</output></div>
+                  <input id="km_driven" name="km_driven" type="range" min="1000" max="500000" step="1000" value="60000" />
+                  <div class="range-ends"><span>1,000 km</span><span>5,00,000 km</span></div>
+                </div>
+                <div class="field span-2">
+                  <label for="owner">Ownership</label>
+                  <div class="select">
+                    <select id="owner" name="owner" required></select>
+                    <svg><use href="#i-chev" /></svg>
+                  </div>
+                </div>
+                <div class="field span-2">
+                  <span class="field-label" id="seller-label">Seller</span>
+                  <div class="segment" data-segment="seller_type" role="radiogroup" aria-labelledby="seller-label" style="margin-top:0.55rem"></div>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset class="group">
+              <legend><span class="num">03</span>Specification</legend>
+              <div class="fields">
+                <div class="field">
+                  <div class="field-row"><label for="mileage">Fuel efficiency</label><output for="mileage" data-out="mileage">19.0 kmpl</output></div>
+                  <input id="mileage" name="mileage" type="range" min="8" max="42" step="0.1" value="19" />
+                  <div class="range-ends"><span>8 kmpl</span><span>42 kmpl</span></div>
+                </div>
+                <div class="field">
+                  <div class="field-row"><label for="engine">Engine displacement</label><output for="engine" data-out="engine">1248 cc</output></div>
+                  <input id="engine" name="engine" type="range" min="600" max="3700" step="10" value="1248" />
+                  <div class="range-ends"><span>600 cc</span><span>3,700 cc</span></div>
+                </div>
+                <div class="field">
+                  <div class="field-row"><label for="max_power">Max power</label><output for="max_power" data-out="max_power">74.0 bhp</output></div>
+                  <input id="max_power" name="max_power" type="range" min="30" max="400" step="0.5" value="74" />
+                  <div class="range-ends"><span>30 bhp</span><span>400 bhp</span></div>
+                </div>
+                <div class="field">
+                  <div class="field-row"><label for="seats">Seats</label><output for="seats" data-out="seats">5 seats</output></div>
+                  <input id="seats" name="seats" type="range" min="2" max="14" step="1" value="5" />
+                  <div class="range-ends"><span>2</span><span>14</span></div>
+                </div>
+              </div>
+            </fieldset>
+
+            <div class="form-foot">
+              <button type="submit" id="predict-btn" class="btn btn-gold btn-block">
+                <span class="btn-text">Reveal valuation</span><svg><use href="#i-arrow" /></svg>
+              </button>
+              <p class="form-note">Indicative estimate from a machine-learning model, not a binding offer.</p>
+            </div>
+          </form>
+
+          <aside class="result-col">
+            <div class="card result-card reveal d1" id="result-card" data-state="empty" aria-live="polite">
+              <div class="state state-empty">
+                <div class="tilt" id="tilt"><svg class="car-line" aria-hidden="true"><use href="#car-line" /></svg></div>
+                <h3>Your valuation appears here</h3>
+                <p>Adjust the specification, then select <strong>Reveal valuation</strong> to get a resale price in rupees.</p>
+              </div>
+
+              <div class="state state-loading">
+                <div class="loading-label"><span class="spinner"></span>Assaying your car…</div>
+                <div class="skeleton" style="height:14px;width:40%"></div>
+                <div class="skeleton" style="height:56px;width:85%;margin-top:14px"></div>
+                <div class="skeleton" style="height:12px;width:55%;margin-top:14px"></div>
+                <div class="skeleton" style="height:8px;width:100%;margin-top:36px"></div>
+                <div class="skeleton" style="height:64px;width:100%;margin-top:28px"></div>
+              </div>
+
+              <div class="state state-value">
+                <div class="res-label"><span>Estimated resale value</span><span class="stale-pill" id="stale-pill" hidden>Inputs changed</span></div>
+                <div class="price" id="price">₹0</div>
+                <p class="price-sub">About <strong id="price-compact">₹0</strong> for this <span id="price-car">car</span></p>
+
+                <div class="band">
+                  <div class="band-head"><span>Likely range</span><span id="band-note">±15.9% typical error</span></div>
+                  <div class="band-track"><div class="band-fill"></div><div class="band-pin"></div></div>
+                  <div class="band-ends">
+                    <span><small>Low</small><span id="band-low">₹0</span></span>
+                    <span><small>High</small><span id="band-high">₹0</span></span>
+                  </div>
+                </div>
+
+                <div class="compare" id="compare" hidden>
+                  <svg><use href="#i-info" /></svg>
+                  <div id="compare-text"></div>
+                </div>
+
+                <div class="chips" id="chips"></div>
+
+                <div class="res-meta">
+                  <div>Model accuracy<b id="meta-acc">94.1% R²</b></div>
+                  <div>Typical error<b id="meta-mae">±₹68,223</b></div>
+                </div>
+                <a class="res-link" href="#insights">See how this value moves <svg><use href="#i-down" /></svg></a>
+              </div>
+
+              <div class="state state-error">
+                <div class="error-box" role="alert">
+                  <h3>Prediction error</h3>
+                  <p id="error-text">Something went wrong.</p>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────────── Insights ─────────────── -->
+    <section class="section" id="insights" style="padding-top:0">
+      <div class="wrap">
+        <header class="section-head reveal">
+          <p class="kicker">02 · Insights</p>
+          <h2 class="h2">See what moves <em>the number.</em></h2>
+          <p class="section-sub">Hover or focus a chart to read exact values. Every chart also has a table view.</p>
+        </header>
+
+        <div class="tabs reveal" role="tablist" aria-label="Insight charts">
+          <button class="tab" role="tab" id="tab-age" aria-controls="panel" aria-selected="true" data-chart="age">Depreciation</button>
+          <button class="tab" role="tab" id="tab-km" aria-controls="panel" aria-selected="false" data-chart="km" tabindex="-1">Odometer</button>
+          <button class="tab" role="tab" id="tab-brand" aria-controls="panel" aria-selected="false" data-chart="brand" tabindex="-1">Brand landscape</button>
+        </div>
+
+        <div class="card chart-card reveal" id="panel" role="tabpanel" aria-labelledby="tab-age">
+          <div class="chart-panel" id="chart-panel">
+            <div class="chart-head">
+              <div>
+                <h3 class="chart-title" id="chart-title"></h3>
+                <p class="chart-sub" id="chart-sub"></p>
+              </div>
+              <p class="takeaway" id="takeaway" hidden></p>
+            </div>
+            <div class="legend" id="legend"></div>
+            <div class="chart" id="chart"></div>
+            <div id="chart-table"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────────── Method ─────────────── -->
+    <section class="section method-section" id="method">
+      <div class="wrap">
+        <header class="section-head reveal">
+          <p class="kicker">03 · Method</p>
+          <h2 class="h2">Three steps, <em>one fair price.</em></h2>
+          <p class="section-sub">A scikit-learn pipeline trained on Indian used-car listings powers every estimate.</p>
+        </header>
+        <div class="steps">
+          <article class="card step reveal">
+            <div class="step-num">i.</div>
+            <h3>Clean the market</h3>
+            <p>Listings are de-duplicated, and units like “23.4 kmpl” or “74 bhp” are parsed into numbers. Missing fuel efficiency is filled with the brand's median.</p>
+            <ul><li><span data-stat="records">6,717</span> usable listings</li><li><span data-stat="brands">31</span> brands, <span data-stat="years">1994–2020</span></li></ul>
+          </article>
+          <article class="card step reveal d1">
+            <div class="step-num">ii.</div>
+            <h3>Engineer the signal</h3>
+            <p>Domain features capture how buyers actually price a car, beyond the raw specification sheet.</p>
+            <ul><li>Age and kilometres per year</li><li>Power-to-displacement ratio</li><li>Luxury-marque flag</li></ul>
+          </article>
+          <article class="card step reveal d2">
+            <div class="step-num">iii.</div>
+            <h3>Ensemble the estimate</h3>
+            <p>Three tree ensembles vote on the log of the price, which keeps estimates positive and steady across budget and luxury cars.</p>
+            <ul><li>Histogram gradient boosting · 45%</li><li>Gradient boosting · 35%</li><li>Random forest · 20%</li></ul>
+          </article>
+        </div>
+        <div class="card metric-strip reveal">
+          <div class="metric"><div class="v" data-stat="accuracy">94.1%</div><div class="k">Variance explained</div><div class="d">R² on held-out cars</div></div>
+          <div class="metric"><div class="v" data-stat="mae-full">₹68,223</div><div class="k">Mean absolute error</div><div class="d">Average rupee miss</div></div>
+          <div class="metric"><div class="v" data-stat="mape">15.9%</div><div class="k">Mean % error</div><div class="d">Relative miss per car</div></div>
+          <div class="metric"><div class="v">15</div><div class="k">Model features</div><div class="d">11 inputs + 4 engineered</div></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div class="foot">
+        <div>
+          <a class="brand" href="#top" aria-label="Karat, back to top">
+            <svg class="brand-mark" aria-hidden="true"><use href="#i-gem" /></svg>
+            <span class="brand-word">KARAT</span>
+          </a>
+          <p>Resale value, assayed. A machine-learning project that estimates used-car prices in India from real listing data.</p>
+        </div>
+        <nav class="foot-links" aria-label="Footer">
+          <a href="#valuate">Valuation</a><a href="#insights">Insights</a><a href="#method">Method</a>
+        </nav>
+      </div>
+      <div class="foot-bottom">
+        <span>© <span id="year-now">2026</span> Karat · Machine Learning Project</span>
+        <span>Estimates are indicative and in Indian rupees (INR).</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
   <script>
-    // Embedded brand list for instant rendering without waiting for network
-    const DEFAULT_BRANDS = [
-      "Maruti", "Hyundai", "Honda", "Toyota", "Ford", "Mahindra", "Tata",
-      "Renault", "Chevrolet", "Volkswagen", "Skoda", "Nissan", "BMW",
-      "Mercedes-Benz", "Audi", "Datsun", "Fiat", "Jeep", "Kia", "MG",
-      "Volvo", "Jaguar", "Land", "Lexus", "Mitsubishi", "Ambassador",
-      "Ashok", "Daewoo", "Force", "Isuzu", "Opel"
-    ];
+  (() => {
+    "use strict";
 
+    const $ = (sel, root = document) => root.querySelector(sel);
+    const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
+    const REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const SVG_NS = "http://www.w3.org/2000/svg";
+
+    // Fallbacks so the form is never empty, even if metadata.json fails to load
+    const DEFAULT_BRANDS = [
+      "Ambassador", "Ashok", "Audi", "BMW", "Chevrolet", "Daewoo", "Datsun", "Fiat", "Force", "Ford",
+      "Honda", "Hyundai", "Isuzu", "Jaguar", "Jeep", "Kia", "Land", "Lexus", "MG", "Mahindra", "Maruti",
+      "Mercedes-Benz", "Mitsubishi", "Nissan", "Opel", "Renault", "Skoda", "Tata", "Toyota", "Volkswagen", "Volvo"
+    ];
     const DEFAULT_OPTIONS = {
-      fuel: ["Petrol", "Diesel", "CNG", "LPG"],
-      seller_type: ["Individual", "Dealer", "Trustmark Dealer"],
-      transmission: ["Manual", "Automatic"],
+      fuel: ["CNG", "Diesel", "LPG", "Petrol"],
+      seller_type: ["Dealer", "Individual", "Trustmark Dealer"],
+      transmission: ["Automatic", "Manual"],
       owner: ["First Owner", "Second Owner", "Third Owner", "Fourth & Above Owner", "Test Drive Car"]
     };
+    const OWNER_ORDER = ["First Owner", "Second Owner", "Third Owner", "Fourth & Above Owner", "Test Drive Car"];
+    const DEFAULT_METRICS = { r2: 0.9415, mae: 68223, mape: 15.91, accuracy_pct: 94.1 };
+    const BRAND_LABELS = { Land: "Land Rover", Ashok: "Ashok Leyland" };
+    const brandLabel = (b) => BRAND_LABELS[b] || b;
 
-    let globalMetadata = null;
+    let meta = null;
+    let metrics = DEFAULT_METRICS;
+    let lastPayload = null;
+    let lastResult = null;
+    let activeChart = "age";
 
-    // Synchronize Range Sliders and Badges
-    function bindSlider(id, badgeId, suffix = "") {
-      const el = document.getElementById(id);
-      const badge = document.getElementById(badgeId);
-      const update = () => {
-        let val = Number(el.value);
-        if (id === "km_driven") {
-          badge.textContent = `${val.toLocaleString("en-IN")}${suffix}`;
-        } else if (id === "mileage" || id === "max_power") {
-          badge.textContent = `${val.toFixed(1)}${suffix}`;
-        } else {
-          badge.textContent = `${val}${suffix}`;
+    // ─────────────── Formatting (INR, Indian digit grouping) ───────────────
+    const inrFmt = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 });
+    const numFmt = new Intl.NumberFormat("en-IN");
+    const fmtINR = (v) => inrFmt.format(Math.round(v));
+    const trim = (n, d = 2) => String(+n.toFixed(d));
+    function fmtLakh(v) {
+      if (v >= 1e7) return `₹${trim(v / 1e7)} Crore`;
+      if (v >= 1e5) return `₹${trim(v / 1e5)} Lakh`;
+      return fmtINR(v);
+    }
+    function fmtShort(v) {
+      if (v >= 1e7) return `₹${trim(v / 1e7)}Cr`;
+      if (v >= 1e5) return `₹${trim(v / 1e5, 1)}L`;
+      if (v >= 1e3) return `₹${trim(v / 1e3, 0)}K`;
+      return `₹${Math.round(v)}`;
+    }
+    const fmtAxisINR = (v) => (v === 0 ? "₹0" : fmtShort(v));
+    const fmtKmShort = (v) => (v >= 1000 ? `${trim(v / 1000, 0)}K` : String(v));
+
+    // ─────────────── Theme ───────────────
+    const rootEl = document.documentElement;
+    const systemDark = window.matchMedia("(prefers-color-scheme: dark)");
+    const currentTheme = () => rootEl.dataset.theme || (systemDark.matches ? "dark" : "light");
+    const themeListeners = [];
+    function setTheme(theme) {
+      rootEl.classList.add("theme-anim");
+      rootEl.dataset.theme = theme;
+      try { localStorage.setItem("karat-theme", theme); } catch (e) {}
+      $('meta[name="theme-color"]').setAttribute("content", theme === "dark" ? "#111315" : "#F3F2EE");
+      themeListeners.forEach((fn) => fn(theme));
+      setTimeout(() => rootEl.classList.remove("theme-anim"), 500);
+    }
+    $("#theme-toggle").addEventListener("click", () => setTheme(currentTheme() === "dark" ? "light" : "dark"));
+    systemDark.addEventListener("change", () => { if (!rootEl.dataset.theme) themeListeners.forEach((fn) => fn(currentTheme())); });
+
+    // ─────────────── Nav + scroll reveal ───────────────
+    const nav = $("#nav");
+    const onScroll = () => nav.classList.toggle("scrolled", window.scrollY > 8);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+
+    if ("IntersectionObserver" in window && !REDUCED) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
+      }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
+      $$(".reveal").forEach((el) => io.observe(el));
+    } else {
+      $$(".reveal").forEach((el) => el.classList.add("in"));
+    }
+    $("#year-now").textContent = new Date().getFullYear();
+
+    // ─────────────── Form controls ───────────────
+    const SLIDERS = {
+      year: (v) => String(v),
+      km_driven: (v) => `${numFmt.format(v)} km`,
+      mileage: (v) => `${Number(v).toFixed(1)} kmpl`,
+      engine: (v) => `${numFmt.format(v)} cc`,
+      max_power: (v) => `${Number(v).toFixed(1)} bhp`,
+      seats: (v) => `${v} seats`
+    };
+    let datasetMaxYear = 2020;
+
+    function syncSlider(id, bump = false) {
+      const input = document.getElementById(id);
+      const min = Number(input.min), max = Number(input.max);
+      const pct = ((Number(input.value) - min) / (max - min)) * 100;
+      input.style.setProperty("--pct", `${pct}%`);
+      const out = $(`[data-out="${id}"]`);
+      out.textContent = SLIDERS[id](input.value);
+      if (bump) { out.classList.remove("bump"); void out.offsetWidth; out.classList.add("bump"); }
+      if (id === "year") $("#year-hint").hidden = Number(input.value) <= datasetMaxYear;
+    }
+
+    function populateSelect(id, items, selected, labeler = (x) => x) {
+      const select = document.getElementById(id);
+      if (!items || !items.length) return;
+      const keep = selected ?? select.value;
+      select.replaceChildren(...items.map((item) => {
+        const opt = document.createElement("option");
+        opt.value = item;
+        opt.textContent = labeler(item);
+        return opt;
+      }));
+      if (items.includes(keep)) select.value = keep;
+    }
+
+    function buildSegment(name, items, selected) {
+      const host = $(`[data-segment="${name}"]`);
+      if (!items || !items.length) return;
+      const keep = selected ?? getRadio(name);
+      host.replaceChildren();
+      items.forEach((value) => {
+        const id = `${name}-${value.replace(/\W+/g, "-").toLowerCase()}`;
+        const input = Object.assign(document.createElement("input"), { type: "radio", name, value, id });
+        const label = document.createElement("label");
+        label.htmlFor = id;
+        label.textContent = value;
+        host.append(input, label);
+      });
+      setRadio(name, items.includes(keep) ? keep : items[0]);
+    }
+    const getRadio = (name) => (document.querySelector(`input[name="${name}"]:checked`) || {}).value;
+    function setRadio(name, value) {
+      const input = [...document.getElementsByName(name)].find((i) => i.value === value);
+      if (input) input.checked = true;
+    }
+
+    function applyBrandDefaults(brand, animate = true) {
+      const d = meta && meta.brand_defaults && meta.brand_defaults[brand];
+      if (!d) return;
+      Object.keys(SLIDERS).forEach((id) => {
+        if (d[id] !== undefined && d[id] !== null) {
+          document.getElementById(id).value = d[id];
+          syncSlider(id, animate);
         }
-      };
-      el.addEventListener("input", update);
-      update();
-    }
-
-    // Populate Select Elements cleanly with options
-    function populateSelect(id, items, selectedValue) {
-      const el = document.getElementById(id);
-      if (!el || !items || !items.length) return;
-      el.innerHTML = items.map(item => `
-        <option value="${item}" ${item === selectedValue ? 'selected' : ''}>${item}</option>
-      `).join("");
-      if (selectedValue) {
-        el.value = selectedValue;
-      }
-    }
-
-    // Apply Brand Specific Defaults (same as brand_defaults in app.py)
-    function applyBrandDefaults(brand) {
-      if (!globalMetadata || !globalMetadata.brand_defaults || !globalMetadata.brand_defaults[brand]) return;
-      const d = globalMetadata.brand_defaults[brand];
-
-      if (d.year) {
-        document.getElementById("year").value = d.year;
-        document.getElementById("year-badge").textContent = d.year;
-      }
-      if (d.km_driven) {
-        document.getElementById("km_driven").value = d.km_driven;
-        document.getElementById("km-badge").textContent = `${Number(d.km_driven).toLocaleString("en-IN")} km`;
-      }
-      if (d.mileage) {
-        document.getElementById("mileage").value = d.mileage;
-        document.getElementById("mileage-badge").textContent = `${Number(d.mileage).toFixed(1)} kmpl`;
-      }
-      if (d.engine) {
-        document.getElementById("engine").value = d.engine;
-        document.getElementById("engine-badge").textContent = `${d.engine} CC`;
-      }
-      if (d.max_power) {
-        document.getElementById("max_power").value = d.max_power;
-        document.getElementById("power-badge").textContent = `${Number(d.max_power).toFixed(1)} BHP`;
-      }
-      if (d.seats) {
-        document.getElementById("seats").value = d.seats;
-        document.getElementById("seats-badge").textContent = d.seats;
-      }
-
-      if (d.fuel) document.getElementById("fuel").value = d.fuel;
-      if (d.seller_type) document.getElementById("seller_type").value = d.seller_type;
-      if (d.transmission) document.getElementById("transmission").value = d.transmission;
+      });
+      ["fuel", "seller_type", "transmission"].forEach((k) => d[k] && setRadio(k, d[k]));
       if (d.owner) document.getElementById("owner").value = d.owner;
+      if (animate && !REDUCED) {
+        const form = $("#car-form");
+        form.classList.remove("flash"); void form.offsetWidth; form.classList.add("flash");
+      }
     }
 
-    // Streamlit-like Balloon Animation
-    function launchBalloons() {
-      const canvas = document.getElementById("balloon-canvas");
-      const ctx = canvas.getContext("2d");
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-
-      const colors = ["#2a9df4", "#4CAF50", "#ff4b4b", "#ffa500", "#9b51e0", "#ff76ac"];
-      const balloons = [];
-      const count = 45;
-
-      for (let i = 0; i < count; i++) {
-        balloons.push({
-          x: Math.random() * canvas.width,
-          y: canvas.height + Math.random() * 300,
-          radius: 18 + Math.random() * 14,
-          color: colors[Math.floor(Math.random() * colors.length)],
-          speed: 2.5 + Math.random() * 3.5,
-          swing: Math.random() * 2,
-          swingSpeed: 0.02 + Math.random() * 0.02,
-          angle: Math.random() * Math.PI * 2
-        });
-      }
-
-      let animationFrame;
-      function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        let active = 0;
-
-        for (let b of balloons) {
-          b.y -= b.speed;
-          b.angle += b.swingSpeed;
-          b.x += Math.sin(b.angle) * b.swing;
-
-          if (b.y + b.radius > -50) {
-            active++;
-            // Draw balloon body
-            ctx.beginPath();
-            ctx.ellipse(b.x, b.y, b.radius * 0.85, b.radius, 0, 0, Math.PI * 2);
-            ctx.fillStyle = b.color;
-            ctx.fill();
-
-            // Draw balloon knot
-            ctx.beginPath();
-            ctx.moveTo(b.x - 3, b.y + b.radius);
-            ctx.lineTo(b.x + 3, b.y + b.radius);
-            ctx.lineTo(b.x, b.y + b.radius + 5);
-            ctx.closePath();
-            ctx.fillStyle = b.color;
-            ctx.fill();
-
-            // Draw balloon string
-            ctx.beginPath();
-            ctx.moveTo(b.x, b.y + b.radius + 5);
-            ctx.quadraticCurveTo(b.x - 6, b.y + b.radius + 25, b.x + 3, b.y + b.radius + 45);
-            ctx.strokeStyle = "rgba(180,180,180,0.6)";
-            ctx.lineWidth = 1;
-            ctx.stroke();
-          }
-        }
-
-        if (active > 0) {
-          animationFrame = requestAnimationFrame(animate);
-        } else {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-        }
-      }
-      animate();
+    function readPayload() {
+      const fd = new FormData($("#car-form"));
+      return {
+        name: fd.get("name"),
+        year: Number(fd.get("year")),
+        km_driven: Number(fd.get("km_driven")),
+        fuel: fd.get("fuel"),
+        seller_type: fd.get("seller_type"),
+        transmission: fd.get("transmission"),
+        owner: fd.get("owner"),
+        mileage: Number(fd.get("mileage")),
+        engine: Number(fd.get("engine")),
+        max_power: Number(fd.get("max_power")),
+        seats: Number(fd.get("seats"))
+      };
     }
 
-    // Initialize Page
-    async function init() {
-      // 1. Setup sliders immediately
-      bindSlider("year", "year-badge");
-      bindSlider("km_driven", "km-badge", " km");
-      bindSlider("mileage", "mileage-badge", " kmpl");
-      bindSlider("engine", "engine-badge", " CC");
-      bindSlider("max_power", "power-badge", " BHP");
-      bindSlider("seats", "seats-badge");
-
-      // 2. Populate options immediately with defaults so nothing is ever empty!
-      populateSelect("name", DEFAULT_BRANDS, "Maruti");
-      populateSelect("fuel", DEFAULT_OPTIONS.fuel, "Petrol");
-      populateSelect("seller_type", DEFAULT_OPTIONS.seller_type, "Individual");
-      populateSelect("transmission", DEFAULT_OPTIONS.transmission, "Manual");
-      populateSelect("owner", DEFAULT_OPTIONS.owner, "First Owner");
-
-      // 3. Fetch full metadata from server
-      try {
-        const res = await fetch("/metadata.json");
-        if (res.ok) {
-          globalMetadata = await res.json();
-          if (globalMetadata.brands) {
-            const currentBrand = document.getElementById("name").value || globalMetadata.brands[0];
-            populateSelect("name", globalMetadata.brands, currentBrand);
-          }
-          if (globalMetadata.options) {
-            populateSelect("fuel", globalMetadata.options.fuel, document.getElementById("fuel").value);
-            populateSelect("seller_type", globalMetadata.options.seller_type, document.getElementById("seller_type").value);
-            populateSelect("transmission", globalMetadata.options.transmission, document.getElementById("transmission").value);
-            populateSelect("owner", globalMetadata.options.owner, document.getElementById("owner").value);
-          }
-          if (globalMetadata.metrics) {
-            const m = globalMetadata.metrics;
-            document.getElementById("caption-text").textContent =
-              `Model accuracy: ${m.accuracy_pct || (m.r2 * 100).toFixed(1)}% (R² ${m.r2.toFixed(3)}) · typical error ±₹${m.mae.toLocaleString("en-IN")} (${m.mape ? m.mape.toFixed(1) + '%' : ''})`;
-          }
-        }
-      } catch (e) {
-        console.warn("Loaded with local defaults, metadata fetch bypassed:", e);
+    // ─────────────── Stats from metadata ───────────────
+    function applyStats() {
+      const m = metrics;
+      const acc = m.accuracy_pct ?? +(m.r2 * 100).toFixed(1);
+      const set = (key, text) => $$(`[data-stat="${key}"]`).forEach((el) => (el.textContent = text));
+      set("accuracy", `${acc}%`);
+      set("mae", `±${fmtShort(m.mae)}`);
+      set("mae-full", fmtINR(m.mae));
+      set("mape", `${Number(m.mape).toFixed(1)}%`);
+      $("#meta-acc").textContent = `${acc}% R²`;
+      $("#meta-mae").textContent = `±${fmtINR(m.mae)}`;
+      $("#band-note").textContent = `±${Number(m.mape).toFixed(1)}% typical error`;
+      if (meta && meta.stats) {
+        set("records", numFmt.format(meta.stats.records));
+        set("brands", String(meta.stats.brands));
+        set("years", `${meta.stats.years[0]}–${meta.stats.years[1]}`);
       }
+    }
 
-      // Brand selection change event
-      document.getElementById("name").addEventListener("change", (e) => {
-        applyBrandDefaults(e.target.value);
+    function buildRibbon(brands) {
+      const names = brands.map(brandLabel);
+      const track = $("#ribbon");
+      track.replaceChildren();
+      [...names, ...names].forEach((n) => {
+        const s = document.createElement("span");
+        s.textContent = n;
+        track.appendChild(s);
       });
     }
 
-    // Handle Form Submission
-    document.getElementById("car-form").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const btn = document.getElementById("predict-btn");
-      const container = document.getElementById("result-container");
-      btn.disabled = true;
-      btn.innerHTML = `<span>⏳</span><span>Calculating...</span>`;
+    // ─────────────── Result rendering ───────────────
+    const card = $("#result-card");
+    const setState = (s) => (card.dataset.state = s);
 
-      const formData = new FormData(e.target);
-      const payload = {
-        name: formData.get("name"),
-        year: Number(formData.get("year")),
-        km_driven: Number(formData.get("km_driven")),
-        fuel: formData.get("fuel"),
-        seller_type: formData.get("seller_type"),
-        transmission: formData.get("transmission"),
-        owner: formData.get("owner"),
-        mileage: Number(formData.get("mileage")),
-        engine: Number(formData.get("engine")),
-        max_power: Number(formData.get("max_power")),
-        seats: Number(formData.get("seats"))
+    function countUp(node, to) {
+      const from = Number(node.dataset.value || 0);
+      node.dataset.value = to;
+      if (REDUCED) { node.textContent = fmtINR(to); return; }
+      const t0 = performance.now(), dur = 1100;
+      const step = (t) => {
+        const k = Math.min(1, (t - t0) / dur);
+        const e = 1 - Math.pow(1 - k, 4);
+        node.textContent = fmtINR(from + (to - from) * e);
+        if (k < 1) requestAnimationFrame(step);
       };
+      requestAnimationFrame(step);
+    }
+
+    function marketReference(brand, year) {
+      const market = meta && meta.market;
+      if (!market) return null;
+      const row = (market.brand_year[brand] || []).find((r) => r[0] === year && r[2] >= 3);
+      if (row) return { median: row[1], n: row[2], what: `${year} ${brandLabel(brand)} listing` };
+      const bm = market.brand_median[brand];
+      if (bm) return { median: bm[0], n: bm[1], what: `${brandLabel(brand)} listing across all years` };
+      return null;
+    }
+
+    function renderResult(payload, data) {
+      const price = Number(data.price);
+      setState("value");
+      $("#stale-pill").hidden = true;
+      countUp($("#price"), price);
+      $("#price-compact").textContent = fmtLakh(price);
+      $("#price-car").textContent = `${payload.year} ${brandLabel(payload.name)}`;
+
+      const spread = Number(metrics.mape || 15) / 100;
+      $("#band-low").textContent = fmtShort(price * (1 - spread));
+      $("#band-high").textContent = fmtShort(price * (1 + spread));
+
+      const ref = marketReference(payload.name, payload.year);
+      const compare = $("#compare");
+      if (ref && ref.median > 0) {
+        const diff = (price - ref.median) / ref.median;
+        const pct = Math.abs(Math.round(diff * 100));
+        const text = $("#compare-text");
+        text.replaceChildren();
+        const strong = document.createElement("strong");
+        strong.textContent = pct < 3 ? "In line with" : `${pct}% ${diff > 0 ? "above" : "below"}`;
+        text.append(strong, ` the median ${ref.what}: ${fmtShort(ref.median)} across ${numFmt.format(ref.n)} cars in the dataset.`);
+        compare.hidden = false;
+      } else {
+        compare.hidden = true;
+      }
+
+      const chips = [
+        `${payload.year}`, brandLabel(payload.name), payload.fuel, payload.transmission,
+        `${numFmt.format(payload.km_driven)} km`, payload.owner, payload.seller_type
+      ];
+      $("#chips").replaceChildren(...chips.map((c) => Object.assign(document.createElement("span"), { className: "chip", textContent: c })));
+
+      $("#stage-price").textContent = fmtINR(price);
+      $("#stage-car").textContent = `${payload.year} ${brandLabel(payload.name)} · ${payload.fuel}`;
+    }
+
+    // ─────────────── Champagne bubbles (celebration) ───────────────
+    function launchBubbles() {
+      if (REDUCED) return;
+      const canvas = $("#bubbles");
+      const ctx = canvas.getContext("2d");
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = innerWidth * dpr; canvas.height = innerHeight * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const bubbles = Array.from({ length: 70 }, () => ({
+        x: Math.random() * innerWidth,
+        y: innerHeight + 10 + Math.random() * innerHeight * 0.25,
+        r: 3 + Math.random() * 10,
+        v: 4.5 + Math.random() * 5,
+        a: Math.random() * Math.PI * 2,
+        w: 0.6 + Math.random() * 1.4,
+        gold: Math.random() < 0.7
+      }));
+      const draw = () => {
+        ctx.clearRect(0, 0, innerWidth, innerHeight);
+        let alive = 0;
+        for (const b of bubbles) {
+          b.y -= b.v; b.a += 0.04; b.x += Math.sin(b.a) * b.w;
+          if (b.y < -30) continue;
+          alive++;
+          const fade = Math.min(1, b.y / (innerHeight * 0.35));
+          ctx.globalAlpha = 0.85 * fade;
+          ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+          ctx.fillStyle = b.gold ? "rgba(198,168,117,0.35)" : "rgba(243,242,238,0.3)";
+          ctx.fill();
+          ctx.lineWidth = 1.2; ctx.strokeStyle = b.gold ? "rgba(198,168,117,0.9)" : "rgba(243,242,238,0.85)"; ctx.stroke();
+          ctx.beginPath(); ctx.arc(b.x - b.r * 0.35, b.y - b.r * 0.35, b.r * 0.25, 0, Math.PI * 2);
+          ctx.fillStyle = "rgba(255,255,255,0.8)"; ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+        if (alive) requestAnimationFrame(draw); else ctx.clearRect(0, 0, innerWidth, innerHeight);
+      };
+      requestAnimationFrame(draw);
+    }
+
+    // ─────────────── Submit ───────────────
+    $("#car-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = $("#predict-btn");
+      const payload = readPayload();
+      btn.disabled = true;
+      $(".btn-text", btn).textContent = "Assaying…";
+      setState("loading");
+      if (window.innerWidth <= 1024) card.scrollIntoView({ behavior: REDUCED ? "auto" : "smooth", block: "start" });
 
       try {
-        const response = await fetch("/api/predict", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.error || "Prediction request failed");
-
-        // Format car description
-        const carDesc = `${payload.year} ${payload.name} (${payload.fuel}, ${payload.transmission})`;
-
-        container.innerHTML = `
-          <div class="st-result-box">
-            <h2>The Predicted Car Price is:</h2>
-            <div class="price-display">${data.price_formatted}</div>
-          </div>
-
-          <div class="price-details-grid">
-            <div class="detail-card">
-              <div class="title">Vehicle</div>
-              <div class="val" style="font-size: 1rem;">${carDesc}</div>
-            </div>
-            <div class="detail-card">
-              <div class="title">Mileage & Usage</div>
-              <div class="val">${payload.km_driven.toLocaleString("en-IN")} km</div>
-            </div>
-            <div class="detail-card">
-              <div class="title">Model Confidence</div>
-              <div class="val" style="color: #4CAF50;">94.1% R²</div>
-            </div>
-          </div>
-        `;
-
-        // Launch celebratory Streamlit balloons!
-        launchBalloons();
-
-        // Smooth scroll to result
-        container.scrollIntoView({ behavior: "smooth", block: "nearest" });
-
+        const [response] = await Promise.all([
+          fetch("/api/predict", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ...payload, include_curves: true })
+          }),
+          new Promise((r) => setTimeout(r, REDUCED ? 0 : 450)) // let the loading state register
+        ]);
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || `Prediction request failed (${response.status})`);
+        lastPayload = payload;
+        lastResult = data;
+        renderResult(payload, data);
+        renderActiveChart();
+        launchBubbles();
       } catch (err) {
-        container.innerHTML = `
-          <div style="background-color: #fee2e2; border: 1px solid #f87171; color: #991b1b; padding: 1.5rem; border-radius: 10px; margin-top: 1.5rem; text-align: center;">
-            <h3 style="margin-bottom: 0.5rem;">⚠️ Prediction Error</h3>
-            <p>${err.message}</p>
-          </div>
-        `;
+        $("#error-text").textContent = err.message || "Prediction request failed";
+        setState("error");
       } finally {
         btn.disabled = false;
-        btn.innerHTML = `<span>🚀</span><span>Predict Price</span>`;
+        $(".btn-text", btn).textContent = "Reveal valuation";
       }
     });
 
-    // Start
+    $("#car-form").addEventListener("input", (e) => {
+      if (e.target.type === "range") syncSlider(e.target.id);
+      if (lastResult && card.dataset.state === "value") $("#stale-pill").hidden = false;
+    });
+    $("#name").addEventListener("change", (e) => {
+      applyBrandDefaults(e.target.value);
+      if (lastResult && card.dataset.state === "value") $("#stale-pill").hidden = false;
+      renderActiveChart();
+    });
+
+    // Empty-state car tilts with the pointer
+    const tilt = $("#tilt");
+    if (!REDUCED) {
+      card.addEventListener("pointermove", (e) => {
+        if (card.dataset.state !== "empty") return;
+        const r = card.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+        tilt.firstElementChild.style.transform = `rotateX(${8 - y * 16}deg) rotateY(${-14 + x * 28}deg)`;
+      });
+      card.addEventListener("pointerleave", () => (tilt.firstElementChild.style.transform = ""));
+    }
+
+    // ─────────────── Charts (hand-built SVG) ───────────────
+    function svgEl(tag, attrs, parent) {
+      const node = document.createElementNS(SVG_NS, tag);
+      for (const k in attrs) node.setAttribute(k, attrs[k]);
+      if (parent) parent.appendChild(node);
+      return node;
+    }
+    function niceTicks(min, max, count) {
+      const span = Math.max(max - min, 1e-9);
+      const raw = span / count;
+      const mag = Math.pow(10, Math.floor(Math.log10(raw)));
+      const norm = raw / mag;
+      const step = (norm < 1.5 ? 1 : norm < 3 ? 2 : norm < 7 ? 5 : 10) * mag;
+      const ticks = [];
+      const end = Math.ceil(max / step - 1e-9) * step;
+      for (let v = Math.ceil(min / step) * step; v <= end + step * 1e-6; v += step) ticks.push(+v.toFixed(6));
+      return { ticks, step };
+    }
+
+    function makeTip(host) {
+      const tip = document.createElement("div");
+      tip.className = "chart-tip";
+      host.appendChild(tip);
+      return {
+        show(head, rows, x, y) {
+          tip.replaceChildren();
+          tip.appendChild(Object.assign(document.createElement("div"), { className: "tip-head", textContent: head }));
+          rows.forEach((r) => {
+            const row = document.createElement("div");
+            row.className = "tip-row";
+            const key = document.createElement("i");
+            key.className = `${r.key === "dot" ? "key-dot" : "key-line"} ${r.cls}`;
+            const b = document.createElement("b"); b.textContent = r.value;
+            const s = document.createElement("span"); s.textContent = r.name;
+            row.append(key, b, s);
+            tip.appendChild(row);
+          });
+          const hw = host.clientWidth, tw = tip.offsetWidth;
+          const left = x + 16 + tw > hw ? x - tw - 16 : x + 16;
+          tip.style.left = `${Math.max(0, left)}px`;
+          tip.style.top = `${Math.max(0, y)}px`;
+          tip.classList.add("show");
+        },
+        hide() { tip.classList.remove("show"); }
+      };
+    }
+
+    function animatePath(path) {
+      if (REDUCED) return;
+      const len = path.getTotalLength();
+      if (!len) return;
+      path.style.strokeDasharray = `${len}`;
+      path.style.strokeDashoffset = `${len}`;
+      path.getBoundingClientRect();
+      path.style.transition = "stroke-dashoffset 1.2s cubic-bezier(0.2,0.7,0.2,1)";
+      path.style.strokeDashoffset = "0";
+      path.addEventListener("transitionend", () => { path.style.strokeDasharray = ""; }, { once: true });
+    }
+
+    /**
+     * Line chart. series: [{ name, cls, points: [[x, y]], area?, dots?, key }]
+     * focus: { x, y, label } draws the "your car" marker.
+     */
+    function lineChart(host, cfg) {
+      host.replaceChildren();
+      const W = Math.max(host.clientWidth, 280);
+      const H = W < 560 ? 250 : 320;
+      const m = { t: 30, r: 18, b: 34, l: W < 560 ? 48 : 58 };
+      const pts = cfg.series.flatMap((s) => s.points);
+      if (!pts.length) return;
+      const xs = [...new Set(pts.map((p) => p[0]))].sort((a, b) => a - b);
+      const xMin = xs[0], xMax = xs[xs.length - 1];
+      const yMaxRaw = Math.max(...pts.map((p) => p[1]), cfg.focus ? cfg.focus.y : 0);
+      const { ticks: yTicks } = niceTicks(0, yMaxRaw * 1.08, 4);
+      const yTop = yTicks[yTicks.length - 1] || 1;
+      const sx = (v) => m.l + ((v - xMin) / ((xMax - xMin) || 1)) * (W - m.l - m.r);
+      const sy = (v) => H - m.b - (v / yTop) * (H - m.t - m.b);
+
+      const svg = svgEl("svg", { viewBox: `0 0 ${W} ${H}`, width: W, height: H, class: "chart-svg", role: "img", tabindex: 0, "aria-label": cfg.aria }, host);
+      yTicks.forEach((v) => {
+        svgEl("line", { x1: m.l, x2: W - m.r, y1: sy(v), y2: sy(v), class: v === 0 ? "axis" : "grid" }, svg);
+        svgEl("text", { x: m.l - 10, y: sy(v) + 4, "text-anchor": "end", class: "tick" }, svg).textContent = cfg.yFmt(v);
+      });
+      const xCount = W < 560 ? 4 : 7;
+      niceTicks(xMin, xMax, xCount).ticks.filter((v) => v >= xMin && v <= xMax).forEach((v) => {
+        svgEl("text", { x: sx(v), y: H - m.b + 20, "text-anchor": "middle", class: "tick" }, svg).textContent = cfg.xFmt(v);
+      });
+
+      cfg.series.forEach((s) => {
+        if (!s.points.length) return;
+        const d = s.points.map((p, i) => `${i ? "L" : "M"}${sx(p[0]).toFixed(1)},${sy(p[1]).toFixed(1)}`).join("");
+        if (s.area) {
+          const last = s.points[s.points.length - 1], first = s.points[0];
+          svgEl("path", { d: `${d}L${sx(last[0])},${sy(0)}L${sx(first[0])},${sy(0)}Z`, class: `area ${s.cls}` }, svg);
+        }
+        const path = svgEl("path", { d, class: `line ${s.cls}` }, svg);
+        animatePath(path);
+        if (s.dots) s.points.forEach((p) => svgEl("circle", { cx: sx(p[0]), cy: sy(p[1]), r: 4, class: `dot ${s.cls}` }, svg));
+      });
+
+      if (cfg.focus) {
+        const fx = sx(cfg.focus.x), fy = sy(cfg.focus.y);
+        svgEl("line", { x1: fx, x2: fx, y1: fy, y2: sy(0), class: "focus-drop" }, svg);
+        if (!REDUCED) svgEl("circle", { cx: fx, cy: fy, r: 7, class: "focus-halo" }, svg);
+        svgEl("circle", { cx: fx, cy: fy, r: 6.5, class: "focus-dot" }, svg);
+        const anchor = fx > W - 120 ? "end" : fx < m.l + 80 ? "start" : "middle";
+        svgEl("text", { x: fx, y: fy - 16, "text-anchor": anchor, class: "focus-label" }, svg).textContent = cfg.focus.label;
+      }
+
+      // Hover layer: crosshair snaps to the nearest x and lists every series there
+      const cross = svgEl("line", { y1: m.t, y2: H - m.b, class: "crosshair", opacity: 0 }, svg);
+      const hoverDots = cfg.series.map((s) => svgEl("circle", { r: 5, class: `hover-dot ${s.cls}`, opacity: 0 }, svg));
+      const overlay = svgEl("rect", { x: m.l, y: 0, width: W - m.l - m.r, height: H - m.b, fill: "transparent" }, svg);
+      const tip = makeTip(host);
+      let idx = -1;
+      const show = (i) => {
+        idx = Math.max(0, Math.min(xs.length - 1, i));
+        const x = xs[idx];
+        cross.setAttribute("x1", sx(x)); cross.setAttribute("x2", sx(x)); cross.setAttribute("opacity", 1);
+        const rows = [];
+        cfg.series.forEach((s, k) => {
+          const p = s.points.find((q) => q[0] === x);
+          if (!p) { hoverDots[k].setAttribute("opacity", 0); return; }
+          hoverDots[k].setAttribute("cx", sx(x)); hoverDots[k].setAttribute("cy", sy(p[1])); hoverDots[k].setAttribute("opacity", 1);
+          rows.push({ name: s.name, value: fmtINR(p[1]), cls: `bg-${s.cls}`, key: s.key || "line" });
+        });
+        if (!rows.length) rows.push({ name: "No listings", value: "—", cls: "bg-muted", key: "dot" });
+        tip.show(cfg.xHead(x), rows, sx(x) * (svg.getBoundingClientRect().width / W), m.t);
+      };
+      const hide = () => {
+        cross.setAttribute("opacity", 0);
+        hoverDots.forEach((d) => d.setAttribute("opacity", 0));
+        tip.hide();
+      };
+      overlay.addEventListener("pointermove", (e) => {
+        const r = svg.getBoundingClientRect();
+        const px = (e.clientX - r.left) * (W / r.width);
+        let best = 0;
+        xs.forEach((x, i) => { if (Math.abs(sx(x) - px) < Math.abs(sx(xs[best]) - px)) best = i; });
+        show(best);
+      });
+      overlay.addEventListener("pointerleave", hide);
+      svg.addEventListener("focus", () => show(idx < 0 ? (cfg.focus ? xs.indexOf(cfg.focus.x) : xs.length - 1) : idx));
+      svg.addEventListener("blur", hide);
+      svg.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+          e.preventDefault();
+          show(idx + (e.key === "ArrowRight" ? 1 : -1));
+        }
+      });
+    }
+
+    /** Horizontal bar chart. rows: [{ label, value, n, you }] */
+    function barChart(host, cfg) {
+      host.replaceChildren();
+      const W = Math.max(host.clientWidth, 280);
+      const rowH = 30, barH = 16;
+      const m = { t: 6, r: 64, b: 6, l: W < 560 ? 104 : 128 };
+      const H = m.t + m.b + cfg.rows.length * rowH;
+      const vMax = Math.max(...cfg.rows.map((r) => r.value));
+      const sx = (v) => (v / vMax) * (W - m.l - m.r);
+      const svg = svgEl("svg", { viewBox: `0 0 ${W} ${H}`, width: W, height: H, class: "chart-svg", role: "img", tabindex: 0, "aria-label": cfg.aria }, host);
+      const tip = makeTip(host);
+      const rowsEls = [];
+      let idx = -1;
+
+      cfg.rows.forEach((r, i) => {
+        const y = m.t + i * rowH;
+        const g = svgEl("g", { class: "bar-row" }, svg);
+        const cls = r.you ? " is-you" : "";
+        svgEl("text", { x: m.l - 12, y: y + rowH / 2 + 4, "text-anchor": "end", class: `bar-label${cls}` }, g).textContent = r.label;
+        const x0 = m.l, x1 = m.l + Math.max(sx(r.value), 6), y0 = y + (rowH - barH) / 2, rad = 4;
+        svgEl("path", {
+          d: `M${x0},${y0}H${x1 - rad}Q${x1},${y0} ${x1},${y0 + rad}V${y0 + barH - rad}Q${x1},${y0 + barH} ${x1 - rad},${y0 + barH}H${x0}Z`,
+          class: `bar${cls}`, style: REDUCED ? "" : `animation-delay:${i * 30}ms`
+        }, g);
+        svgEl("text", { x: x1 + 8, y: y + rowH / 2 + 4, class: "bar-val" }, g).textContent = fmtShort(r.value);
+        svgEl("rect", { x: 0, y, width: W, height: rowH, fill: "transparent" }, g);
+        g.addEventListener("pointerenter", () => show(i));
+        g.addEventListener("pointerleave", hide);
+        rowsEls.push(g);
+      });
+
+      function show(i) {
+        idx = Math.max(0, Math.min(cfg.rows.length - 1, i));
+        const r = cfg.rows[idx];
+        rowsEls.forEach((g, k) => g.classList.toggle("active", k === idx));
+        const scale = svg.getBoundingClientRect().width / W;
+        tip.show(r.label, [
+          { name: "median listing", value: fmtINR(r.value), cls: r.you ? "bg-c1" : "bg-muted", key: "dot" },
+          { name: "listings", value: numFmt.format(r.n), cls: "bg-muted", key: "dot" }
+        ], (m.l + sx(r.value)) * scale, (m.t + idx * rowH) * scale - 8);
+      }
+      function hide() { rowsEls.forEach((g) => g.classList.remove("active")); tip.hide(); }
+      svg.addEventListener("focus", () => show(idx < 0 ? Math.max(0, cfg.rows.findIndex((r) => r.you)) : idx));
+      svg.addEventListener("blur", hide);
+      svg.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); show(idx + (e.key === "ArrowDown" ? 1 : -1)); }
+      });
+    }
+
+    function tableView(headers, rows) {
+      const details = document.createElement("details");
+      details.className = "table-view";
+      details.appendChild(Object.assign(document.createElement("summary"), { textContent: "View as table" }));
+      const scroll = Object.assign(document.createElement("div"), { className: "table-scroll" });
+      const table = document.createElement("table");
+      const thead = table.createTHead().insertRow();
+      headers.forEach((h) => thead.appendChild(Object.assign(document.createElement("th"), { textContent: h })));
+      const tbody = table.createTBody();
+      rows.forEach((r) => { const tr = tbody.insertRow(); r.forEach((c) => (tr.insertCell().textContent = c)); });
+      scroll.appendChild(table);
+      details.appendChild(scroll);
+      return details;
+    }
+
+    function setLegend(items) {
+      const legend = $("#legend");
+      legend.replaceChildren(...items.map((it) => {
+        const s = document.createElement("span");
+        s.append(Object.assign(document.createElement("i"), { className: `${it.key === "dot" ? "key-dot" : "key-line"} bg-${it.cls}` }), it.name);
+        return s;
+      }));
+      legend.hidden = !items.length;
+    }
+    function setTakeaway(nodes) {
+      const t = $("#takeaway");
+      t.replaceChildren(...(nodes || []));
+      t.hidden = !nodes || !nodes.length;
+    }
+    const strong = (text) => Object.assign(document.createElement("strong"), { textContent: text });
+    function emptyChart(message) {
+      $("#chart").replaceChildren(Object.assign(document.createElement("div"), { className: "chart-empty", textContent: message }));
+      $("#chart-table").replaceChildren();
+      setLegend([]);
+    }
+
+    function currentBrand() { return (lastPayload && lastPayload.name) || $("#name").value; }
+
+    function renderAgeChart() {
+      const brand = $("#name").value;
+      const brandName = brandLabel(brand);
+      $("#chart-title").textContent = "Value across model years";
+      const resultMatches = lastPayload && lastPayload.name === brand && lastResult && lastResult.curves;
+      $("#chart-sub").textContent = resultMatches
+        ? `Your car's estimate if it had been built in a different year, against the median ${brandName} listing price for each year.`
+        : `Median ${brandName} listing price for each model year. Run a valuation to overlay your car's own curve.`;
+
+      const market = ((meta && meta.market && meta.market.brand_year[brand]) || []).filter((r) => r[2] >= 3).map((r) => [r[0], r[1]]);
+      const series = [];
+      if (resultMatches) series.push({ name: "Your car (model estimate)", cls: "c1", points: lastResult.curves.year, area: true });
+      if (market.length) series.push({ name: `Median ${brandName} listing`, cls: "c2", points: market, dots: true, key: "dot" });
+      if (!series.length) { emptyChart(`Not enough ${brandName} listings to chart. Try another brand.`); setTakeaway(null); return; }
+
+      setLegend(series.map((s) => ({ name: s.name, cls: s.cls, key: s.key })));
+      const focus = resultMatches ? { x: lastPayload.year, y: lastResult.price, label: `Your car · ${fmtShort(lastResult.price)}` } : null;
+      lineChart($("#chart"), {
+        series, focus,
+        aria: `Line chart of price by model year for ${brandName}.`,
+        xFmt: (v) => String(v), xHead: (v) => `Model year ${v}`, yFmt: fmtAxisINR
+      });
+
+      if (resultMatches) {
+        const curve = lastResult.curves.year;
+        const here = curve.find((p) => p[0] === lastPayload.year);
+        const older = curve.find((p) => p[0] === lastPayload.year - 1);
+        if (here && older) {
+          const delta = here[1] - older[1];
+          setTakeaway(delta >= 0
+            ? ["A year older would cost this car about ", strong(fmtShort(delta)), " in resale value."]
+            : ["The model sees little age penalty here; a year older changes the estimate by ", strong(fmtShort(-delta)), "."]);
+        } else setTakeaway(null);
+      } else {
+        setTakeaway(market.length ? ["Newer ", strong(brandName), " cars hold far more value. Run a valuation to see your car on this curve."] : null);
+      }
+
+      const years = [...new Set(series.flatMap((s) => s.points.map((p) => p[0])))].sort((a, b) => a - b);
+      $("#chart-table").replaceChildren(tableView(
+        ["Model year", ...series.map((s) => s.name)],
+        years.map((y) => [String(y), ...series.map((s) => { const p = s.points.find((q) => q[0] === y); return p ? fmtINR(p[1]) : "—"; })])
+      ));
+    }
+
+    function renderKmChart() {
+      $("#chart-title").textContent = "Value across odometer readings";
+      if (!lastResult || !lastResult.curves) {
+        $("#chart-sub").textContent = "How the estimate changes as the same car racks up kilometres.";
+        setTakeaway(null);
+        emptyChart("Run a valuation to see how kilometres driven move your car's price.");
+        return;
+      }
+      const curve = lastResult.curves.km_driven;
+      $("#chart-sub").textContent = `The same ${lastPayload.year} ${brandLabel(lastPayload.name)} with everything else held constant.`;
+      setLegend([]);
+      lineChart($("#chart"), {
+        series: [{ name: "Model estimate", cls: "c1", points: curve, area: true }],
+        focus: { x: lastPayload.km_driven, y: lastResult.price, label: `Your car · ${fmtShort(lastResult.price)}` },
+        aria: "Line chart of estimated price by kilometres driven.",
+        xFmt: (v) => `${fmtKmShort(v)} km`, xHead: (v) => `${numFmt.format(v)} km`, yFmt: fmtAxisINR
+      });
+      const first = curve[0], last = curve[curve.length - 1];
+      const per10k = ((first[1] - last[1]) / (last[0] - first[0])) * 10000;
+      setTakeaway(per10k > 0
+        ? ["On average, every extra 10,000 km trims about ", strong(fmtShort(per10k)), " from this car's value."]
+        : ["Kilometres barely move this estimate; age and specification dominate."]);
+      $("#chart-table").replaceChildren(tableView(["Kilometres driven", "Model estimate"], curve.map((p) => [`${numFmt.format(p[0])} km`, fmtINR(p[1])])));
+    }
+
+    function renderBrandChart() {
+      const brand = $("#name").value;
+      $("#chart-title").textContent = "Median listing price by brand";
+      $("#chart-sub").textContent = `Brands with at least 20 listings in the dataset, with ${brandLabel(brand)} highlighted.`;
+      setLegend([]);
+      const medians = (meta && meta.market && meta.market.brand_median) || null;
+      if (!medians) { emptyChart("Market data is unavailable right now."); setTakeaway(null); return; }
+      const rows = Object.entries(medians)
+        .filter(([b, v]) => v[1] >= 20 || b === brand)
+        .map(([b, v]) => ({ label: brandLabel(b), value: v[0], n: v[1], you: b === brand }))
+        .sort((a, b) => b.value - a.value);
+      barChart($("#chart"), { rows, aria: "Bar chart of median listing price by brand." });
+      const rank = rows.findIndex((r) => r.you) + 1;
+      setTakeaway(rank ? [strong(brandLabel(brand)), ` ranks #${rank} of ${rows.length} brands by median listing price.`] : null);
+      $("#chart-table").replaceChildren(tableView(["Brand", "Median listing", "Listings"], rows.map((r) => [r.label, fmtINR(r.value), numFmt.format(r.n)])));
+    }
+
+    function renderActiveChart() {
+      ({ age: renderAgeChart, km: renderKmChart, brand: renderBrandChart })[activeChart]();
+    }
+
+    const tabs = $$(".tab");
+    function selectTab(tab) {
+      activeChart = tab.dataset.chart;
+      tabs.forEach((t) => {
+        const on = t === tab;
+        t.setAttribute("aria-selected", on);
+        t.tabIndex = on ? 0 : -1;
+      });
+      $("#panel").setAttribute("aria-labelledby", tab.id);
+      const panel = $("#chart-panel");
+      panel.style.animation = "none"; void panel.offsetWidth; panel.style.animation = "";
+      renderActiveChart();
+    }
+    tabs.forEach((tab, i) => {
+      tab.addEventListener("click", () => selectTab(tab));
+      tab.addEventListener("keydown", (e) => {
+        if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+        const next = tabs[(i + (e.key === "ArrowRight" ? 1 : tabs.length - 1)) % tabs.length];
+        next.focus(); selectTab(next);
+      });
+    });
+
+    let resizeTimer, lastWidth = 0;
+    new ResizeObserver(([entry]) => {
+      const w = Math.round(entry.contentRect.width);
+      if (w === lastWidth) return;
+      lastWidth = w;
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(renderActiveChart, 150);
+    }).observe($("#chart"));
+
+    // ─────────────── 3D car stage (three.js) ───────────────
+    function initStage() {
+      const stage = $("#stage");
+      const T = window.THREE;
+      if (!T) return;
+      let renderer;
+      try {
+        renderer = new T.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "low-power" });
+      } catch (e) { return; }
+
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.outputEncoding = T.sRGBEncoding;
+      renderer.toneMapping = T.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.0;
+      const canvas = renderer.domElement;
+      canvas.className = "stage-canvas";
+      stage.appendChild(canvas);
+
+      const scene = new T.Scene();
+      const camera = new T.PerspectiveCamera(26, 1, 0.1, 100);
+      camera.position.set(7.4, 2.7, 7.6);
+      camera.lookAt(0, 0.45, 0);
+
+      // Studio environment for reflections: a dim room with soft-box panels
+      const pmrem = new T.PMREMGenerator(renderer);
+      const studio = new T.Scene();
+      studio.add(new T.Mesh(new T.BoxGeometry(30, 14, 30), new T.MeshBasicMaterial({ color: 0x1a1c1f, side: T.BackSide })));
+      const softbox = (w, h, pos, rot, color) => {
+        const p = new T.Mesh(new T.PlaneGeometry(w, h), new T.MeshBasicMaterial({ color, side: T.DoubleSide }));
+        p.position.set(...pos); p.rotation.set(...rot); studio.add(p);
+      };
+      softbox(16, 4, [0, 6.8, 0], [Math.PI / 2, 0, 0], 0xffffff);
+      softbox(12, 2.2, [0, 2.4, -14], [0, 0, 0], 0xf6ead2);
+      softbox(10, 2.5, [14, 3, 2], [0, -Math.PI / 2, 0], 0xffffff);
+      softbox(8, 1.6, [-14, 1.8, -3], [0, Math.PI / 2, 0], 0xc6a875);
+      scene.environment = pmrem.fromScene(studio, 0.035).texture;
+      scene.add(new T.HemisphereLight(0xffffff, 0x1c2024, 0.35));
+      const key = new T.DirectionalLight(0xffffff, 0.9);
+      key.position.set(4, 8, 6);
+      scene.add(key);
+
+      const lin = (hex) => new T.Color(hex).convertSRGBToLinear();
+      const paint = new T.MeshPhysicalMaterial({ color: lin("#C6A875"), metalness: 0.75, roughness: 0.32, clearcoat: 1, clearcoatRoughness: 0.08 });
+      const glass = new T.MeshPhysicalMaterial({ color: lin("#0E1012"), metalness: 0.4, roughness: 0.06, clearcoat: 1, clearcoatRoughness: 0.02 });
+      const rubber = new T.MeshStandardMaterial({ color: lin("#141618"), roughness: 0.85, metalness: 0.05 });
+      const alloy = new T.MeshStandardMaterial({ color: lin("#D9D5CB"), metalness: 1, roughness: 0.22 });
+      const trim = new T.MeshStandardMaterial({ color: lin("#1C2024"), metalness: 0.5, roughness: 0.45 });
+
+      const W = 1.8, BEVEL = 0.05;
+      const extrude = (shape, depth, bevel) => {
+        const g = new T.ExtrudeGeometry(shape, { depth, bevelEnabled: true, bevelThickness: bevel, bevelSize: bevel, bevelSegments: 6, curveSegments: 36 });
+        g.translate(0, 0, -depth / 2);
+        return g;
+      };
+
+      // Side profile of a low grand-tourer, extruded across its width
+      const body = new T.Shape();
+      body.moveTo(-2.2, 0.32);
+      body.lineTo(-1.82, 0.32);
+      body.absarc(-1.36, 0.36, 0.46, Math.PI, 0, true);
+      body.lineTo(0.94, 0.32);
+      body.absarc(1.4, 0.36, 0.46, Math.PI, 0, true);
+      body.lineTo(2.18, 0.32);
+      body.quadraticCurveTo(2.32, 0.38, 2.31, 0.54);
+      body.quadraticCurveTo(2.29, 0.7, 2.06, 0.75);
+      body.lineTo(0.98, 0.9);
+      body.lineTo(-1.25, 0.93);
+      body.quadraticCurveTo(-1.95, 0.94, -2.17, 0.84);
+      body.quadraticCurveTo(-2.3, 0.72, -2.26, 0.5);
+      body.lineTo(-2.2, 0.32);
+
+      const cabin = new T.Shape();
+      cabin.moveTo(1.04, 0.86);
+      cabin.quadraticCurveTo(0.55, 1.23, 0.12, 1.3);
+      cabin.lineTo(-0.7, 1.3);
+      cabin.quadraticCurveTo(-1.3, 1.26, -1.74, 0.9);
+      cabin.lineTo(1.04, 0.86);
+
+      const car = new T.Group();
+      car.add(new T.Mesh(extrude(body, W - BEVEL * 2, BEVEL), paint));
+      car.add(new T.Mesh(extrude(cabin, W - 0.44, 0.06), glass));
+
+      // Thin roof panel so the greenhouse reads as glass with a painted roof
+      const roof = new T.Mesh(new T.BoxGeometry(0.95, 0.025, W - 0.5), paint);
+      roof.position.set(-0.28, 1.36, 0);
+      car.add(roof);
+
+      // Light signatures: full-width DRL at the nose, tail bar at the rear
+      const drl = new T.Mesh(new T.BoxGeometry(0.03, 0.035, W - 0.46), new T.MeshBasicMaterial({ color: lin("#F3F2EE") }));
+      drl.position.set(2.345, 0.62, 0);
+      car.add(drl);
+      const tail = new T.Mesh(new T.BoxGeometry(0.03, 0.04, W - 0.36), new T.MeshBasicMaterial({ color: lin("#A8443A") }));
+      tail.position.set(-2.305, 0.72, 0);
+      car.add(tail);
+      const skirt = new T.Mesh(new T.BoxGeometry(2.1, 0.06, W + 0.01), trim);
+      skirt.position.set(0.02, 0.34, 0);
+      car.add(skirt);
+
+      const wheels = [];
+      const makeWheel = (side) => {
+        const g = new T.Group();
+        const tyre = new T.Mesh(new T.CylinderGeometry(0.35, 0.35, 0.24, 48), rubber);
+        tyre.rotation.x = Math.PI / 2;
+        const rim = new T.Mesh(new T.CylinderGeometry(0.245, 0.245, 0.245, 40), alloy);
+        rim.rotation.x = Math.PI / 2;
+        const hub = new T.Mesh(new T.CylinderGeometry(0.055, 0.055, 0.26, 20), paint);
+        hub.rotation.x = Math.PI / 2;
+        g.add(tyre, rim, hub);
+        for (let i = 0; i < 6; i++) {
+          const a = (i / 6) * Math.PI * 2;
+          const spoke = new T.Mesh(new T.BoxGeometry(0.045, 0.2, 0.02), trim);
+          spoke.position.set(Math.cos(a) * 0.13, Math.sin(a) * 0.13, side * 0.126);
+          spoke.rotation.z = a - Math.PI / 2;
+          g.add(spoke);
+        }
+        return g;
+      };
+      [[-1.36, 1], [-1.36, -1], [1.4, 1], [1.4, -1]].forEach(([x, side]) => {
+        const w = makeWheel(side);
+        w.position.set(x, 0.36, side * (W / 2 - 0.15));
+        car.add(w);
+        wheels.push(w);
+      });
+
+      // Soft contact shadow from a radial-gradient texture
+      const shadowCanvas = document.createElement("canvas");
+      shadowCanvas.width = shadowCanvas.height = 256;
+      const sctx = shadowCanvas.getContext("2d");
+      const grad = sctx.createRadialGradient(128, 128, 0, 128, 128, 128);
+      grad.addColorStop(0, "rgba(0,0,0,0.75)");
+      grad.addColorStop(0.55, "rgba(0,0,0,0.3)");
+      grad.addColorStop(1, "rgba(0,0,0,0)");
+      sctx.fillStyle = grad;
+      sctx.fillRect(0, 0, 256, 256);
+      const shadowMat = new T.MeshBasicMaterial({ map: new T.CanvasTexture(shadowCanvas), transparent: true, depthWrite: false });
+      const shadow = new T.Mesh(new T.PlaneGeometry(5.6, 2.6), shadowMat);
+      shadow.rotation.x = -Math.PI / 2;
+      shadow.position.y = 0.005;
+      car.add(shadow);
+
+      // Turntable: champagne rings with rotating tick marks
+      const turntable = new T.Group();
+      const ringMat = new T.MeshBasicMaterial({ color: lin("#C6A875"), transparent: true, opacity: 0.55, side: T.DoubleSide, depthWrite: false });
+      const ring = new T.Mesh(new T.RingGeometry(2.9, 2.925, 160), ringMat);
+      const outerMat = ringMat.clone(); outerMat.opacity = 0.2;
+      const outer = new T.Mesh(new T.RingGeometry(3.35, 3.36, 160), outerMat);
+      [ring, outer].forEach((r) => { r.rotation.x = -Math.PI / 2; turntable.add(r); });
+      const tickGeo = new T.PlaneGeometry(0.018, 0.16);
+      const tickMat = ringMat.clone(); tickMat.opacity = 0.35;
+      for (let i = 0; i < 90; i++) {
+        const a = (i / 90) * Math.PI * 2;
+        const t = new T.Mesh(tickGeo, tickMat);
+        t.rotation.x = -Math.PI / 2;
+        t.rotation.z = -a;
+        t.position.set(Math.sin(a) * 3.12, 0.002, Math.cos(a) * 3.12);
+        if (i % 15 === 0) t.scale.y = 1.8;
+        turntable.add(t);
+      }
+      scene.add(turntable, car);
+
+      const applyStageTheme = (theme) => {
+        shadowMat.opacity = theme === "dark" ? 1 : 0.55;
+        ringMat.opacity = theme === "dark" ? 0.55 : 0.85;
+        outerMat.opacity = theme === "dark" ? 0.2 : 0.35;
+        tickMat.opacity = theme === "dark" ? 0.35 : 0.55;
+        renderer.toneMappingExposure = theme === "dark" ? 1.0 : 1.1;
+      };
+      applyStageTheme(currentTheme());
+      themeListeners.push(applyStageTheme);
+
+      const resize = () => {
+        const w = stage.clientWidth, h = stage.clientHeight;
+        if (!w || !h) return;
+        renderer.setSize(w, h, false);
+        camera.aspect = w / h;
+        camera.fov = w / h < 1.2 ? 30 : 26;
+        camera.updateProjectionMatrix();
+      };
+      new ResizeObserver(resize).observe(stage);
+      resize();
+
+      // Interaction: drag to spin with inertia, gentle tilt follows the pointer
+      let rotY = -0.75, vel = 0, dragging = false, lastX = 0, tilt = 0, tiltTarget = 0;
+      canvas.addEventListener("pointerdown", (e) => { dragging = true; lastX = e.clientX; vel = 0; canvas.setPointerCapture(e.pointerId); });
+      canvas.addEventListener("pointermove", (e) => {
+        const r = stage.getBoundingClientRect();
+        tiltTarget = ((e.clientY - r.top) / r.height - 0.5) * 0.12;
+        if (!dragging) return;
+        const dx = e.clientX - lastX;
+        lastX = e.clientX;
+        vel = dx * 0.0085;
+        rotY += vel;
+      });
+      const release = () => { dragging = false; };
+      canvas.addEventListener("pointerup", release);
+      canvas.addEventListener("pointercancel", release);
+      canvas.addEventListener("pointerleave", () => { tiltTarget = 0; });
+
+      let visible = true, running = false, prev = performance.now(), elapsed = 0;
+      const frame = (now) => {
+        if (!visible || document.hidden) { running = false; return; }
+        const dt = Math.min((now - prev) / 1000, 0.05);
+        prev = now; elapsed += dt;
+        if (!dragging) {
+          rotY += vel;
+          vel *= 0.94;
+          if (!REDUCED && Math.abs(vel) < 0.002) rotY += dt * 0.22;
+        }
+        car.rotation.y = rotY;
+        turntable.rotation.y = rotY * 0.5;
+        tilt += (tiltTarget - tilt) * 0.06;
+        scene.rotation.x = tilt;
+        if (!REDUCED) car.position.y = Math.sin(elapsed * 1.4) * 0.012;
+        renderer.render(scene, camera);
+        requestAnimationFrame(frame);
+      };
+      const start = () => { if (!running && visible && !document.hidden) { running = true; prev = performance.now(); requestAnimationFrame(frame); } };
+      new IntersectionObserver(([e]) => { visible = e.isIntersecting; start(); }).observe(stage);
+      document.addEventListener("visibilitychange", start);
+
+      renderer.render(scene, camera);
+      stage.classList.add("has-3d");
+      requestAnimationFrame(() => canvas.classList.add("ready"));
+      start();
+    }
+
+    // ─────────────── Init ───────────────
+    async function init() {
+      Object.keys(SLIDERS).forEach((id) => syncSlider(id));
+      populateSelect("name", DEFAULT_BRANDS, "Maruti", brandLabel);
+      populateSelect("owner", DEFAULT_OPTIONS.owner, "First Owner");
+      buildSegment("fuel", DEFAULT_OPTIONS.fuel, "Petrol");
+      buildSegment("transmission", DEFAULT_OPTIONS.transmission, "Manual");
+      buildSegment("seller_type", DEFAULT_OPTIONS.seller_type, "Individual");
+      buildRibbon(DEFAULT_BRANDS);
+
+      try {
+        const res = await fetch("/metadata.json");
+        if (res.ok) {
+          meta = await res.json();
+          if (meta.metrics) metrics = { ...DEFAULT_METRICS, ...meta.metrics };
+          if (meta.brands) { populateSelect("name", meta.brands, $("#name").value, brandLabel); buildRibbon(meta.brands); }
+          if (meta.options) {
+            const owners = [...meta.options.owner].sort((a, b) => OWNER_ORDER.indexOf(a) - OWNER_ORDER.indexOf(b));
+            populateSelect("owner", owners);
+            buildSegment("fuel", meta.options.fuel);
+            buildSegment("transmission", meta.options.transmission);
+            buildSegment("seller_type", meta.options.seller_type);
+          }
+          if (meta.ranges && meta.ranges.year) datasetMaxYear = meta.ranges.year[1];
+          applyBrandDefaults($("#name").value, false);
+        }
+      } catch (e) {
+        console.warn("Loaded with built-in defaults; metadata fetch failed:", e);
+      }
+      applyStats();
+      renderActiveChart();
+    }
+
     init();
+    if (window.THREE) initStage();
+    else window.addEventListener("load", initStage, { once: true });
+  })();
   </script>
 </body>
 </html>
